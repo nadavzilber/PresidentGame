@@ -14,19 +14,20 @@ const Board = ({ config }) => {
 
     const [discardPile, setDiscardPile] = useState([{ name: '5', value: 5 }, { name: '4', value: 4 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: 'A', value: 14 }, { name: '6', value: 6 }, { name: '4', value: 4 }]);
     const [hands, setHands] = useState([
-        [{ name: 'K', value: 13 }, { name: '8', value: 8 }, { name: '7', value: 7 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '6', value: 6 }, { name: 'J', value: 11 }, { name: '9', value: 9 }],
-        [{ name: 'K', value: 13 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '9', value: 9 }]
-    ]
-    );
+        [{ name: 'K', value: 13 }, { name: '9', value: 9 }, { name: '7', value: 7 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '6', value: 6 }, { name: 'J', value: 11 }, { name: '9', value: 9 }],
+        [{ name: 'K', value: 13 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '8', value: 8 }, { name: '2', value: 2 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '9', value: 9 }]
+    ]);
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [numOfCardsNeeded, setNumOfCardsNeeded] = useState(0);
     const [isMaxed, setMaxed] = useState(false);
     const [valueToBeat, setValueToBeat] = useState(0);
+    const [lastMove, setLastMove] = useState([]);
+    const [selectedAmount, setSelectedAmount] = useState(0);
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log('useEffect')
-        setValueToBeat(discardPile[discardPile.length-1].value);
-    },[])
+        setValueToBeat(discardPile[discardPile.length - 1].value);
+    }, [])
 
     const select = (cardIndex, playerId, type) => {
         type === 'one' ? selectOne(cardIndex, playerId) : type === 'selectAll' ? selectAll(cardIndex, playerId, false) : selectAll(cardIndex, playerId, true);;
@@ -41,6 +42,7 @@ const Board = ({ config }) => {
         hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         handsCopy[index] = hand;
         setHands(handsCopy);
+        //todo selectedAmount
     }
 
     const selectAll = (cardIndex, playerId, deselectAll) => {
@@ -59,6 +61,7 @@ const Board = ({ config }) => {
         //hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         handsCopy[index] = hand;
         setHands(handsCopy);
+        //todo selectedAmount
     }
 
     const isEnoughCards = (numOfCardsPlayed) => {
@@ -159,13 +162,15 @@ const Board = ({ config }) => {
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
             setDiscardPile([...discardPile, ...selectedCards]);
+            console.log('new discard pile ==> ', [...discardPile, ...selectedCards])
+            setLastMove(selectedCards);
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
             setValueToBeat(play.cardToBeat);
             nextTurn();
             console.log('-----------------------------------');
         } else {
-            console.log('cards dont match, cant play them together, or theyre too low')
+            console.log('cards dont match, cant play them together, or theyre too low', JSON.stringify(selectedCards))
         }
     }
 
@@ -183,6 +188,7 @@ const Board = ({ config }) => {
         handsCopy[index] = [...unselectedCards, ...discardPile];
         setHands(handsCopy);
         setDiscardPile([]);
+        setLastMove([]);
         setNumOfCardsNeeded(0);
         setValueToBeat(0);
         setMaxed(false);
@@ -195,28 +201,26 @@ const Board = ({ config }) => {
     }
 
     return (
-        <div className="board">
-            <div className="board-center">
-                <GameHost
-                    currentPlayer={currentPlayer}
+        <div className="board" >
+            <div className="board-center" >
+                <GameHost currentPlayer={currentPlayer}
                     numOfCardsNeeded={numOfCardsNeeded}
                     valueToBeat={valueToBeat}
-                    isMaxed={isMaxed}
-                />
-                <DiscardPile cards={discardPile} />
+                    isMaxed={isMaxed} />
+                <DiscardPile cards={discardPile}
+                    lastMove={lastMove} />
             </div>
-            <div className="board-footer">
-                {hands && hands.map((hand, index) => (
-                    <PlayerHand
-                        stackType="hand"
+            <div className="board-footer" > {
+                hands && hands.map((hand, index) => (
+                    <PlayerHand stackType="hand"
                         cards={hand}
                         playerId={index + 1}
                         select={select}
                         playSelected={playSelected}
-                        pickupCards={pickupCards} />
+                        pickupCards={pickupCards}
+                    />
                 ))}
             </div>
-
         </div>
     )
 }
