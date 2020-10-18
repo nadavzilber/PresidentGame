@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './styles.css';
 import Card from './Card';
 
-function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCards }) {
+function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCards, selectedAmount }) {
     const buttonStyle = {
         height: '27px',
         backgroundColor: "orange",
@@ -17,6 +17,7 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
             {playerId && <label className="stack-title">Player {playerId}'s hand</label>}
             <button style={buttonStyle} onClick={() => pickupCards(playerId)}>Pick up cards</button>
             <button style={buttonStyle} onClick={() => playSelected(playerId)}>Play cards</button>
+            {selectedAmount > 0 && <span>selected:{selectedAmount}</span>}
             <div className={stackType}>
                 {cards && cards.map((card, index) => (
                     <Card key={index}

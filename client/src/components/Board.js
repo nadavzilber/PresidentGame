@@ -42,7 +42,7 @@ const Board = ({ config }) => {
         hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         handsCopy[index] = hand;
         setHands(handsCopy);
-        //todo selectedAmount
+        setSelectedAmount(hand[cardIndex].isSelected ? selectedAmount + 1 : selectedAmount - 1);
     }
 
     const selectAll = (cardIndex, playerId, deselectAll) => {
@@ -52,16 +52,19 @@ const Board = ({ config }) => {
         let hand = [...hands[index]];
         let handsCopy = [...hands];
         let cardValue = hand[cardIndex].value;
+        let changedCardsAmount = 0;
         hand = hand.map(card => {
             //console.log(`card ${card.value} === card ${cardValue} ? ${card.value === cardValue}`)
-            if (card.value === cardValue)
+            if (card.value === cardValue) {
+                changedCardsAmount++;
                 card.isSelected = deselectAll ? false : true;
+            }
             return card;
         });
         //hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         handsCopy[index] = hand;
         setHands(handsCopy);
-        //todo selectedAmount
+        setSelectedAmount(deselectAll ? selectedAmount - changedCardsAmount : selectedAmount + changedCardsAmount);
     }
 
     const isEnoughCards = (numOfCardsPlayed) => {
@@ -167,6 +170,7 @@ const Board = ({ config }) => {
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
             setValueToBeat(play.cardToBeat);
+            setSelectedAmount(0);
             nextTurn();
             console.log('-----------------------------------');
         } else {
@@ -206,7 +210,8 @@ const Board = ({ config }) => {
                 <GameHost currentPlayer={currentPlayer}
                     numOfCardsNeeded={numOfCardsNeeded}
                     valueToBeat={valueToBeat}
-                    isMaxed={isMaxed} />
+                    isMaxed={isMaxed}
+                />
                 <DiscardPile cards={discardPile}
                     lastMove={lastMove} />
             </div>
@@ -218,6 +223,7 @@ const Board = ({ config }) => {
                         select={select}
                         playSelected={playSelected}
                         pickupCards={pickupCards}
+                        selectedAmount={currentPlayer === index + 1 ? selectedAmount : null}
                     />
                 ))}
             </div>

@@ -43,7 +43,8 @@ function Card({ playerId, isSelected, select, position, name, value, inDiscardPi
                 onClick={() => select && select(position, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
                 {!isSelected ? 'Select' : 'Deselect'} All {name}</button>}
 
-            <div className={isFaceDown ? 'facedown-card' : 'card'} //style={cardStyle}
+            {/* <div className={(isFaceDown ? 'facedown-card' : 'card')(isSelected ? 'selected' : '')} //style={cardStyle} */}
+            <div className={`${isFaceDown ? 'facedown-card' : 'card'} ${isSelected ? 'selected' : ''}`}
                 onClick={() => select && select(position, playerId, 'one')}>
                 {!isFaceDown &&
                     <>

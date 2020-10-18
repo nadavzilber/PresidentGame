@@ -38,6 +38,10 @@
     color: black;
 }
 
+.selected {
+    background-color: sandybrown;
+}
+
 .black {
     color: black;
 }
