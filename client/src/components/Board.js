@@ -4,6 +4,7 @@ import Button from './Button';
 import GameHost from './GameHost';
 import PlayerHand from './PlayerHand';
 import DiscardPile from './DiscardPile';
+import Deck from '../Deck';
 
 const Board = ({ config }) => {
 
@@ -27,6 +28,7 @@ const Board = ({ config }) => {
     useEffect(() => {
         console.log('useEffect')
         setValueToBeat(discardPile[discardPile.length - 1].value);
+        Deck.createDeck();
     }, [])
 
     const select = (cardIndex, playerId, type) => {
