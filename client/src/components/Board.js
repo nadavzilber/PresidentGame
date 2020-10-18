@@ -30,7 +30,7 @@ const Board = ({ config }) => {
     }, [])
 
     const select = (cardIndex, playerId, type) => {
-        type === 'one' ? selectOne(cardIndex, playerId) : type === 'selectAll' ? selectAll(cardIndex, playerId, false) : selectAll(cardIndex, playerId, true);;
+        type === 'clearAll' ? clearAllSelections(playerId) : type === 'one' ? selectOne(cardIndex, playerId) : type === 'selectAll' ? selectAll(cardIndex, playerId, false) : selectAll(cardIndex, playerId, true);;
     }
 
     const selectOne = (cardIndex, playerId) => {
@@ -65,6 +65,21 @@ const Board = ({ config }) => {
         handsCopy[index] = hand;
         setHands(handsCopy);
         setSelectedAmount(deselectAll ? selectedAmount - changedCardsAmount : selectedAmount + changedCardsAmount);
+    }
+
+    const clearAllSelections = (playerId) => {
+        if (playerId !== currentPlayer) return;
+        let index = playerId - 1;
+        let hand = [...hands[index]];
+        let handsCopy = [...hands];
+        hand = hand.map((card) => {
+            card.isSelected = false;
+            return card;
+        });
+        //hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
+        handsCopy[index] = hand;
+        setHands(handsCopy);
+        setSelectedAmount(0);
     }
 
     const isEnoughCards = (numOfCardsPlayed) => {
