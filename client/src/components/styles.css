@@ -1,0 +1,13 @@
+.discard {
+    position: relative;
+}
+
+.hand {
+    background-color: yellow;
+    display: flex;
+    justify-content: space-between;
+}
+
+.stack-title {
+    color: black;
+}
