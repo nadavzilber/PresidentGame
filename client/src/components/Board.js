@@ -41,6 +41,7 @@ const Board = ({ config }) => {
         //TODO solve bug - 
         //Uncaught TypeError: Cannot add property isSelected, object is not extensible
         //maybe because i switched from random index value copy to random index splice
+        //but this way theyre unique cards each time
         for (let i = 0; i < numOfCardsInHand; i++) {
             let randomIndex = Math.floor(Math.random() * deck.length);
             let card = deck.splice(randomIndex, 1)[0];
