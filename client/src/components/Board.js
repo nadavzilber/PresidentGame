@@ -9,15 +9,11 @@ import Deck from '../Deck';
 const Board = ({ config }) => {
 
     //todos:
-    //show the last played set spread out like a fan face up on top of the face down discard pile
     //group the same numbers in your hand - that would require a refactor for how i pull them => i would have to switch to an id based query instead of index
     const numberOfPlayers = config.numberOfPlayers;
 
     const [discardPile, setDiscardPile] = useState([{ name: '5', value: 5 }, { name: '4', value: 4 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: 'A', value: 14 }, { name: '6', value: 6 }, { name: '4', value: 4 }]);
-    const [hands, setHands] = useState([
-        [{ name: 'K', value: 13 }, { name: '9', value: 9 }, { name: '7', value: 7 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '6', value: 6 }, { name: 'J', value: 11 }, { name: '9', value: 9 }],
-        [{ name: 'K', value: 13 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '4', value: 4 }, { name: '8', value: 8 }, { name: '2', value: 2 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '5', value: 5 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '6', value: 6 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: '2', value: 2 }, { name: '9', value: 9 }, { name: '9', value: 9 }]
-    ]);
+    const [hands, setHands] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [numOfCardsNeeded, setNumOfCardsNeeded] = useState(0);
     const [isMaxed, setMaxed] = useState(false);
@@ -27,8 +23,31 @@ const Board = ({ config }) => {
 
     useEffect(() => {
         console.log('useEffect')
-        setValueToBeat(discardPile[discardPile.length - 1].value);
-        Deck.createDeck();
+        let deck = Deck.createDeck();
+        let hand1 = [];
+        for (let i = 0; i < 8; i++) {
+            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+            hand1.push(card);
+        }
+
+        let hand2 = [];
+        for (let i = 0; i < 8; i++) {
+            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+            hand2.push(card);
+        }
+        let discard = [];
+        for (let i = 0; i < 4; i++) {
+            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+            discard.push(card);
+        }
+        let lastMoveCard = [Object.assign({}, deck[Math.floor(Math.random() * deck.length)])];
+        console.log('initial random hands:', JSON.stringify([hand1, hand2]));
+        console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
+        setHands([hand1, hand2]);
+        setDiscardPile(discard);
+        setLastMove(lastMoveCard);
+        setValueToBeat(discard[discard.length - 1].num);
+        setNumOfCardsNeeded(1);
     }, [])
 
     const select = (cardIndex, playerId, type) => {
@@ -36,12 +55,14 @@ const Board = ({ config }) => {
     }
 
     const selectOne = (cardIndex, playerId) => {
-        console.log('select one')
+        console.log('select one', cardIndex, playerId)
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
         let hand = [...hands[index]];
         let handsCopy = [...hands];
+        console.log(`handsCopy:${JSON.stringify(handsCopy)}`)
         hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
+        console.log(`hand[cardIndex]:`, JSON.stringify(hand[cardIndex]));
         handsCopy[index] = hand;
         setHands(handsCopy);
         setSelectedAmount(hand[cardIndex].isSelected ? selectedAmount + 1 : selectedAmount - 1);
@@ -53,11 +74,12 @@ const Board = ({ config }) => {
         let index = playerId - 1;
         let hand = [...hands[index]];
         let handsCopy = [...hands];
-        let cardValue = hand[cardIndex].value;
+        let cardValue = hand[cardIndex].num;
+        console.log('clicked card value:', cardValue)
         let changedCardsAmount = 0;
         hand = hand.map(card => {
             //console.log(`card ${card.value} === card ${cardValue} ? ${card.value === cardValue}`)
-            if (card.value === cardValue) {
+            if (card.num === cardValue) {
                 changedCardsAmount++;
                 card.isSelected = deselectAll ? false : true;
             }
@@ -70,6 +92,7 @@ const Board = ({ config }) => {
     }
 
     const clearAllSelections = (playerId) => {
+        console.log('clear all selections')
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
         let hand = [...hands[index]];
@@ -92,8 +115,8 @@ const Board = ({ config }) => {
         let discardCopy = [...discardPile];
         for (let i = 0; i <= numOfCardsNeeded; i++) {
             let topCard = discardCopy.pop();
-            if (topCard.value !== 2)
-                return topCard.value;
+            if (topCard.num !== 2)
+                return topCard.num;
         }
     }
 
@@ -145,18 +168,18 @@ const Board = ({ config }) => {
         let nonJokerValue;
         for (let card of playedCards) {
             //console.log('card.value-->', card.value)
-            if (card.value !== 2) {
-                nonJokerValue = card.value;
+            if (card.num !== 2) {
+                nonJokerValue = card.num;
                 //console.log('nonJokerValue:', nonJokerValue)
             }
-            if (!!nonJokerValue && card.value !== 2 && nonJokerValue !== card.value)
+            if (!!nonJokerValue && card.num !== 2 && nonJokerValue !== card.num)
                 return { isSet: false, nonJokerValue };;
         }
         return { isSet: true, nonJokerValue };
     }
 
     const checkIf2WasPlayed = (playedCards) => {
-        let nonJokers = playedCards.filter(card => card.value !== 2);
+        let nonJokers = playedCards.filter(card => card.num !== 2);
         if (nonJokers.length !== playedCards.length) {
             return { isJokerPlayed: true, nonJokers, onlyJokers: nonJokers == 0 };
         } else return { isJokerPlayed: false }
@@ -235,6 +258,7 @@ const Board = ({ config }) => {
             <div className="board-footer" > {
                 hands && hands.map((hand, index) => (
                     <PlayerHand stackType="hand"
+                        key={index}
                         cards={hand}
                         playerId={index + 1}
                         select={select}

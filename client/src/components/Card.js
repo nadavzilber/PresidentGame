@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles.css';
 
-function Card({ playerId, isSelected, select, position, name, value, inDiscardPile, isLastMove, isFaceDown }) {
+function Card({ playerId, isSelected, select, position, id, num, suit, inDiscardPile, isLastMove, isFaceDown }) {
 
     let cardStyle = {
         margin: "5px",
@@ -36,23 +36,30 @@ function Card({ playerId, isSelected, select, position, name, value, inDiscardPi
     //if (isLastMove)
     //  cardStyle = lastMoveStyle;
     //todo: add suits to cards
+
+    //TODO - &clubs; &spades; &hearts; &diamonds;
+
+    // suit === 'diamond' && <div class="top undersuit">&diamonds;</div>
+    // suit === 'club' && <div class="top undersuit">&clubs;</div>
+    // suit === 'spade' && <div class="top undersuit">&spades;</div>
+
     return (
         <div>
             {!inDiscardPile && <button
                 style={buttonStyle}
                 onClick={() => select && select(position, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
-                {!isSelected ? 'Select' : 'Deselect'} All {name}</button>}
+                {!isSelected ? 'Select' : 'Deselect'} All {id}</button>}
 
             {/* <div className={(isFaceDown ? 'facedown-card' : 'card')(isSelected ? 'selected' : '')} //style={cardStyle} */}
             <div className={`${isFaceDown ? 'facedown-card' : 'card'} ${isSelected ? 'selected' : ''}`}
                 onClick={() => select && select(position, playerId, 'one')}>
                 {!isFaceDown &&
-                    <>
-                        <div class="top number">{name}</div>
-                        <div class="top undersuit">&spades;</div>
-                        <div class="suit">&spades;</div>
-                        <div class="bottom number">{name}</div>
-                    </>
+                    <div className={(suit === '♥' || suit === '♦') ? 'red' : 'black'}>
+                        <div className="top number">{id}</div>
+                        <div className="top undersuit">{suit}</div>
+                        <div className="suit">{suit}</div>
+                        <div className="bottom number">{id}</div>
+                    </div>
                 }
             </div>
         </div>

@@ -32,10 +32,17 @@
     background-color: rgb(206, 196, 172);
 }
 
+.red {
+    color: red;
+}
+
+.black {
+    color:black;
+}
+
 .card {
     background-color: white;
     position: relative;
-    color: black;
 }
 
 .selected {

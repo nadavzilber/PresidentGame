@@ -39,8 +39,9 @@ function DiscardPile({ cards, lastMove }) {
             />)} */}
             <div className="facedown-cards">
                 {getDiscarded().map((card, index) => <Card key={index}
-                    name={card.name}
-                    value={card.value}
+                    id={card.id}
+                    value={card.num}
+                    suit={card.suit}
                     inDiscardPile={true}
                     isFaceDown={true}
                     isSelected={card.isSelected}
@@ -48,8 +49,9 @@ function DiscardPile({ cards, lastMove }) {
             </div>
             <div style={lastMoveContainer}>
                 {getLastMoveCards().map((card, index) => <Card key={index}
-                    name={card.name}
-                    value={card.value}
+                    id={card.id}
+                    value={card.num}
+                    suit={card.suit}
                     inDiscardPile={true}
                     isLastMove={true}
                     isSelected={card.isSelected}

@@ -12,6 +12,8 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         marginRight: "10px",
     }
 
+    console.log('playerHand cards:',cards)
+
     return (
         <div>
             {playerId && <label className="stack-title">Player {playerId}'s hand</label>}
@@ -23,8 +25,9 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
                 {cards && cards.map((card, index) => (
                     <Card key={index}
                         position={index}
-                        name={card.name}
-                        value={card.value}
+                        id={card.id}
+                        num={card.num}
+                        suit={card.suit}
                         inDiscardPile={false}
                         select={stackType === 'hand' ? select : null}
                         playerId={playerId}
