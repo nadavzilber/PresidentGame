@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles.css';
 
-function Card({ playerId, isSelected, select, position, id, num, suit, inDiscardPile, isLastMove, isFaceDown }) {
+function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit, inDiscardPile, isLastMove, isFaceDown }) {
 
     let cardStyle = {
         margin: "5px",
@@ -47,12 +47,12 @@ function Card({ playerId, isSelected, select, position, id, num, suit, inDiscard
         <div>
             {!inDiscardPile && <button
                 style={buttonStyle}
-                onClick={() => select && select(position, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
+                onClick={() => select && select(uniqueId, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
                 {!isSelected ? 'Select' : 'Deselect'} All {id}</button>}
 
             {/* <div className={(isFaceDown ? 'facedown-card' : 'card')(isSelected ? 'selected' : '')} //style={cardStyle} */}
             <div className={`${isFaceDown ? 'facedown-card' : 'card'} ${isSelected ? 'selected' : ''}`}
-                onClick={() => select && select(position, playerId, 'one')}>
+                onClick={() => select && select(uniqueId, playerId, 'one')}>
                 {!isFaceDown &&
                     <div className={(suit === '♥' || suit === '♦') ? 'red' : 'black'}>
                         <div className="top number">{id}</div>
