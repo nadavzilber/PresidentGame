@@ -4,6 +4,8 @@ import Card from './Card';
 
 function DiscardPile({ cards, lastMove }) {
 
+    console.log('DiscardPile props:', cards, lastMove)
+
     const getLastMoveCards = () => {
         let cardsCopy = [...cards];
         const lastMoveCards = [];
@@ -16,8 +18,9 @@ function DiscardPile({ cards, lastMove }) {
 
     const getDiscarded = () => {
         let cardsCopy = [...cards];
+        console.log('cardsCopy >>>', cardsCopy, 'lastMove >>', lastMove)
         const discardedCards = [];
-        for (let i = 0; i < cards.length - lastMove.length; i++) {
+        for (let i = 0; i < cardsCopy.length - lastMove.length; i++) {
             discardedCards.push(cardsCopy.pop());
         }
         console.log('discardedCards:', discardedCards)
@@ -38,14 +41,15 @@ function DiscardPile({ cards, lastMove }) {
                 isSelected={card.isSelected}
             />)} */}
             <div className="facedown-cards">
-                {getDiscarded().map((card, index) => <Card key={index}
-                    id={card.id}
-                    value={card.num}
-                    suit={card.suit}
-                    inDiscardPile={true}
-                    isFaceDown={true}
-                    isSelected={card.isSelected}
-                />)}
+                {getDiscarded().map((card, index) =>
+                    <Card key={index}
+                        id={card.id}
+                        value={card.num}
+                        suit={card.suit}
+                        inDiscardPile={true}
+                        isFaceDown={true}
+                        isSelected={card.isSelected}
+                    />)}
             </div>
             <div style={lastMoveContainer}>
                 {getLastMoveCards().map((card, index) => <Card key={index}

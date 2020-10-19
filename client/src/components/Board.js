@@ -45,6 +45,7 @@ const Board = ({ config }) => {
         for (let i = 0; i < numOfCardsInHand; i++) {
             let randomIndex = Math.floor(Math.random() * deck.length);
             let card = deck.splice(randomIndex, 1)[0];
+            //let cardCopy = { ...card };
             hand1.push(card);
         }
 
@@ -52,22 +53,27 @@ const Board = ({ config }) => {
         for (let i = 0; i < numOfCardsInHand; i++) {
             let randomIndex = Math.floor(Math.random() * deck.length);
             let card = deck.splice(randomIndex, 1)[0];
+           // let cardCopy = { ...card };
             hand2.push(card);
         }
         let discard = [];
         for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
             let randomIndex = Math.floor(Math.random() * deck.length);
             let card = deck.splice(randomIndex, 1)[0];
+            //let cardCopy = { ...card };
             discard.push(card);
         }
         let randomIndex = Math.floor(Math.random() * deck.length);
-        let lastMoveCard = [Object.assign({}, deck[randomIndex])];
+        let lastMoveCard = deck.splice(randomIndex, 1);
+        //let lastMoveCard = { ...card };
+        //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
         console.log('initial random hands:', JSON.stringify([hand1, hand2]));
         console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
         let newValueToBeat = valueToBeatNames(discard[discard.length - 1].num);
         console.log('newValueToBeat:', newValueToBeat)
         //setHands([hand1, hand2]);
         setHands([hand1, hand2]);
+        console.log('discard ==>',discard)
         setDiscardPile(discard);
         setLastMove(lastMoveCard);
         setValueToBeat(newValueToBeat);
@@ -93,11 +99,12 @@ const Board = ({ config }) => {
         if (playerId !== currentPlayer) return;
         let playerHandIndex = playerId - 1;
         let hand = [...hands[playerHandIndex]];
-        const card = hand.find(card => card.uniqueId === uniqueId);
-        //let cardCopy = {...card}
-        console.log('1 card ?!?!',card)
+        const cardIndex = hand.findIndex(card => card.uniqueId === uniqueId);
+        let card = { ...hand[cardIndex] };
+        console.log('1 card ?!?!', card)
         card.isSelected = !!card.isSelected ? false : true;
         let allHandsCopy = [...hands];
+        hand[cardIndex] = card;
         allHandsCopy[playerHandIndex] = hand;
         setHands(allHandsCopy);
         setSelectedAmount(card.isSelected ? selectedAmount + 1 : selectedAmount - 1);
@@ -107,20 +114,22 @@ const Board = ({ config }) => {
         console.log(deselectAll ? '=> deselect all' : 'select all', uniqueId);
         if (playerId !== currentPlayer) return;
         let playerHandIndex = playerId - 1;
-        let hand = [...hands[playerHandIndex]];
-        const selectedCard = hand.find(card => card.uniqueId === uniqueId);
+        let handCopy = [...hands[playerHandIndex]];
+        const cardIndex = handCopy.findIndex(card => card.uniqueId === uniqueId);
+        let selectedCard = { ...handCopy[cardIndex] };
         let changedCardsAmount = 0;
-        hand = hand.map(card => {
+        handCopy = handCopy.map(card => {
             //console.log(`card ${card.value} === card ${cardValue} ? ${card.value === cardValue}`)
             if (card.num === selectedCard.num) {
                 changedCardsAmount++;
                 console.log('card ???!?', card)
-                card.isSelected = deselectAll ? false : true;
+                return { ...card, isSelected: deselectAll ? false : true };
             }
             return card;
         });
         let allHandsCopy = [...hands];
-        allHandsCopy[playerHandIndex] = hand;
+        //hand[cardIndex] = card;
+        allHandsCopy[playerHandIndex] = handCopy;
         setHands(allHandsCopy);
         setSelectedAmount(deselectAll ? selectedAmount - changedCardsAmount : selectedAmount + changedCardsAmount);
         // console.log(deselectAll ? '=> deselect all' : 'select all')
@@ -152,8 +161,7 @@ const Board = ({ config }) => {
         let hand = [...hands[index]];
         let allHandsCopy = [...hands];
         hand = hand.map((card) => {
-            card.isSelected = false;
-            return card;
+            return { ...card, isSelected: false };
         });
         //hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         allHandsCopy[index] = hand;
@@ -260,7 +268,7 @@ const Board = ({ config }) => {
         let cardsRemainingInHand = hands[index].filter(card => !card.isSelected);
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
-            selectedCards.map(card => card.isSelected = false);
+            selectedCards.map(card => ({ ...card, isSelected: false }));
             let handsCopy = [...hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
@@ -285,8 +293,7 @@ const Board = ({ config }) => {
         console.log('pickup cards playerId ==> ', playerId);
         if (discardPile.length === 0) return;
         let unselectedCards = hands[index].map(card => {
-            card.isSelected = false;
-            return card;
+            return { ...card, isSelected: false };
         });
         let handsCopy = [...hands];
         handsCopy[index] = [...unselectedCards, ...discardPile];
