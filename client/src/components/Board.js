@@ -20,19 +20,21 @@ const Board = ({ config }) => {
     const [valueToBeat, setValueToBeat] = useState(0);
     const [lastMove, setLastMove] = useState([]);
     const [selectedAmount, setSelectedAmount] = useState(0);
+    const [gameMsgs, setGameMsgs] = useState();
+    const [winners, setWinners] = useState([]);
 
     useEffect(() => {
         //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
         console.log('useEffect')
         let deck = Deck.createDeck();
         let hand1 = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 3; i++) {
             let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
             hand1.push(card);
         }
 
         let hand2 = [];
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 3; i++) {
             let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
             hand2.push(card);
         }
@@ -45,7 +47,7 @@ const Board = ({ config }) => {
         console.log('initial random hands:', JSON.stringify([hand1, hand2]));
         console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
         let newValueToBeat = valueToBeatNames(discard[discard.length - 1].num);
-        console.log('newValueToBeat:',newValueToBeat)
+        console.log('newValueToBeat:', newValueToBeat)
         setHands([hand1, hand2]);
         setDiscardPile(discard);
         setLastMove(lastMoveCard);
@@ -54,7 +56,7 @@ const Board = ({ config }) => {
     }, [])
 
     const valueToBeatNames = (vtb) => {
-        console.log('valueToBeatNames:',vtb)
+        console.log('valueToBeatNames:', vtb)
         if (vtb === 2) return 'Joker';
         if (vtb === 14) return 'Ace';
         if (vtb === 13) return 'King';
@@ -218,7 +220,13 @@ const Board = ({ config }) => {
     const validateAfterPlay = (cardsRemainingInHand, playerId) => {
         //if playerId's hand is empty => they win, game over
         if (cardsRemainingInHand.length === 0) {
-            console.log(`player ${playerId} wins, hand is empty`)
+            console.log(`player ${playerId} wins, hand is empty`);
+            let winnersCopy = [...winners];
+            let finishPlace = winnersCopy.length + 1;
+            finishPlace = finishPlace === 1 ? '1st' : finishPlace === 2 ? '2nd' : finishPlace === 3 ? '3rd' : `${finishPlace}th`;
+            winnersCopy.push(playerId);
+            setWinners(winnersCopy);
+            setGameMsgs({ ...gameMsgs, playerWon: { winner: playerId, place: finishPlace } });
         }
     }
 
@@ -298,6 +306,7 @@ const Board = ({ config }) => {
                     numOfCardsNeeded={numOfCardsNeeded}
                     valueToBeat={valueToBeat}
                     isMaxed={isMaxed}
+                    gameMsgs={gameMsgs}
                 />
                 <DiscardPile cards={discardPile}
                     lastMove={lastMove} />

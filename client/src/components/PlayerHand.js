@@ -14,6 +14,7 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
 
     console.log('playerHand cards:',cards)
 
+    //todo: add emotes button (rendered probably in gamehost)
     return (
         <div>
             {playerId && <label className="stack-title">Player {playerId}'s hand</label>}
