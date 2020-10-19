@@ -5,6 +5,8 @@ import GameHost from './GameHost';
 import PlayerHand from './PlayerHand';
 import DiscardPile from './DiscardPile';
 import Deck from '../Deck';
+import { useRecoilState } from 'recoil';
+import { handsState } from '../Atoms';
 
 const Board = ({ config }) => {
 
@@ -13,7 +15,7 @@ const Board = ({ config }) => {
     const numberOfPlayers = config.numberOfPlayers;
 
     const [discardPile, setDiscardPile] = useState([{ name: '5', value: 5 }, { name: '4', value: 4 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: 'A', value: 14 }, { name: '6', value: 6 }, { name: '4', value: 4 }]);
-    const [hands, setHands] = useState([]);
+    //const [hands, setHands] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [numOfCardsNeeded, setNumOfCardsNeeded] = useState(0);
     const [isMaxed, setMaxed] = useState(false);
@@ -23,31 +25,47 @@ const Board = ({ config }) => {
     const [gameMsgs, setGameMsgs] = useState();
     const [winners, setWinners] = useState([]);
 
+    //const hands = useRecoilValue(handsState); //only reading the atom
+    //const setHands = useSetRecoilState(handsState) //only writing to the atom
+    const [hands, setHands] = useRecoilState(handsState);
+    //useRecoilState() ==> both reading and writing
+    //useResetRecoilState(): Use this hook to reset an atom to its default value.
+
     useEffect(() => {
         //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
         console.log('useEffect')
         let deck = Deck.createDeck();
+        let numOfCardsInHand = 8;
+        let numOfPlayedCardsInDiscard = 5;
         let hand1 = [];
-        for (let i = 0; i < 3; i++) {
-            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+        //TODO solve bug - 
+        //Uncaught TypeError: Cannot add property isSelected, object is not extensible
+        //maybe because i switched from random index value copy to random index splice
+        for (let i = 0; i < numOfCardsInHand; i++) {
+            let randomIndex = Math.floor(Math.random() * deck.length);
+            let card = deck.splice(randomIndex, 1)[0];
             hand1.push(card);
         }
 
         let hand2 = [];
-        for (let i = 0; i < 3; i++) {
-            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+        for (let i = 0; i < numOfCardsInHand; i++) {
+            let randomIndex = Math.floor(Math.random() * deck.length);
+            let card = deck.splice(randomIndex, 1)[0];
             hand2.push(card);
         }
         let discard = [];
-        for (let i = 0; i < 4; i++) {
-            let card = Object.assign({}, deck[Math.floor(Math.random() * deck.length)]);
+        for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
+            let randomIndex = Math.floor(Math.random() * deck.length);
+            let card = deck.splice(randomIndex, 1)[0];
             discard.push(card);
         }
-        let lastMoveCard = [Object.assign({}, deck[Math.floor(Math.random() * deck.length)])];
+        let randomIndex = Math.floor(Math.random() * deck.length);
+        let lastMoveCard = [Object.assign({}, deck[randomIndex])];
         console.log('initial random hands:', JSON.stringify([hand1, hand2]));
         console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
         let newValueToBeat = valueToBeatNames(discard[discard.length - 1].num);
         console.log('newValueToBeat:', newValueToBeat)
+        //setHands([hand1, hand2]);
         setHands([hand1, hand2]);
         setDiscardPile(discard);
         setLastMove(lastMoveCard);
@@ -75,6 +93,8 @@ const Board = ({ config }) => {
         let playerHandIndex = playerId - 1;
         let hand = [...hands[playerHandIndex]];
         const card = hand.find(card => card.uniqueId === uniqueId);
+        //let cardCopy = {...card}
+        console.log('1 card ?!?!',card)
         card.isSelected = !!card.isSelected ? false : true;
         let allHandsCopy = [...hands];
         allHandsCopy[playerHandIndex] = hand;
@@ -93,6 +113,7 @@ const Board = ({ config }) => {
             //console.log(`card ${card.value} === card ${cardValue} ? ${card.value === cardValue}`)
             if (card.num === selectedCard.num) {
                 changedCardsAmount++;
+                console.log('card ???!?', card)
                 card.isSelected = deselectAll ? false : true;
             }
             return card;

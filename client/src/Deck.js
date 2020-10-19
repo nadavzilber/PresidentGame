@@ -9,7 +9,7 @@ const Deck = {
         let deck = [];
         for (let suit of Deck.suits) {
             for (let value of Deck.numbers) {
-                deck.push({ id: value.id, num: value.num, suit, uniqueId: `${value.id}-${suit}` })
+                deck.push({ id: value.id, num: value.num, suit, uniqueId: `${value.id}-${suit}`, isSelected: false })
             }
         }
         console.log('done creating deck:', deck)
