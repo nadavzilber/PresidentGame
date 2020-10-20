@@ -12,7 +12,7 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         marginRight: "10px",
     }
 
-    console.log('playerHand cards:',cards)
+    //console.log('playerHand cards:',cards)
 
     //todo: add emotes button (rendered probably in gamehost)
     return (
