@@ -12,7 +12,7 @@ const Deck = {
                 deck.push({ id: value.id, num: value.num, suit, uniqueId: `${value.id}-${suit}`, isSelected: false })
             }
         }
-        console.log('done creating deck:', deck)
+        //console.log('done creating deck:', deck)
         return deck;
     },
     //todo: add shuffle

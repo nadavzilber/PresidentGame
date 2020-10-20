@@ -82,3 +82,8 @@
     opacity: 0.35;
     filter: alpha(opacity=35);
 }
+
+.group {
+    position: relative;
+    border: 1px solid steelblue;
+}

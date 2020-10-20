@@ -5,9 +5,9 @@ const Button = () => {
     const onClickHandler = () => {
         // axios.get(`/express_backend`)
         //     .then(res => {
-        //         //console.log('res:',JSON.stringify(res))
+        //         ////console.log('res:',JSON.stringify(res))
         //         const data = res.data;
-        //         console.log('data:',data)
+        //         //console.log('data:',data)
         //     })
     }
     return (
