@@ -19,8 +19,6 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         marginRight: "10px",
     }
 
-    //console.log('playerHand cards:',cards)
-
     const groupCardsByNum = () => {
         let handsCopy = [...hands];
         let handCopy = handsCopy[[playerId - 1]]
@@ -28,13 +26,9 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         for (let i = 2; i <= 14; i++) {
             newHand.push(handCopy.filter(card => card.num === i));
         }
-        console.log('newHand 1:', newHand)
         newHand = newHand.filter(cardArr => cardArr.length)
         let finalHand = [];
-        //newHand = 
         newHand.forEach(cardGroup => cardGroup.forEach(card => finalHand.push(card)))
-        console.log('finalHand:', finalHand)
-        console.log('----------------')
         handsCopy[[playerId - 1]] = finalHand;
         setHands(handsCopy);
         setIsGroup(true);

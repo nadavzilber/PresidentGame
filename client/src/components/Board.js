@@ -10,12 +10,8 @@ import { handsState, discardState } from '../Atoms';
 
 const Board = ({ config }) => {
 
-    //todos:
-    //group the same numbers in your hand - that would require a refactor for how i pull them => i would have to switch to an id based query instead of index
     const numberOfPlayers = config.numberOfPlayers;
 
-    //const [discardPile, setDiscardPile] = useState([{ name: '5', value: 5 }, { name: '4', value: 4 }, { name: '3', value: 3 }, { name: '2', value: 2 }, { name: 'A', value: 14 }, { name: '6', value: 6 }, { name: '4', value: 4 }]);
-    //const [hands, setHands] = useState([]);
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [numOfCardsNeeded, setNumOfCardsNeeded] = useState(0);
     const [isMaxed, setMaxed] = useState(false);
@@ -34,7 +30,6 @@ const Board = ({ config }) => {
 
     useEffect(() => {
         //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
-        //console.log('useEffect')
         let deck = Deck.createDeck();
         let numOfCardsInHand = 8;
         let numOfPlayedCardsInDiscard = 5;
@@ -63,17 +58,10 @@ const Board = ({ config }) => {
         }
         let randomIndex = Math.floor(Math.random() * deck.length);
         let lastMoveCard = deck.splice(randomIndex, 1);
-        ////console.log('initial random hands:', JSON.stringify([hand1, hand2]));
-        //console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
-        console.log('lastMoveCard:', lastMoveCard)
         let newValueToBeat = getStringVTB(lastMoveCard[0].num);
-        ////console.log('newValueToBeat:', newValueToBeat)
         setHands([hand1, hand2]);
-        console.log(`DiscardPile => `, discard)
         setDiscardPile(discard);
-        console.log(`last move => `, lastMoveCard)
         setLastMove(lastMoveCard);
-        console.log('new vtb >>', newValueToBeat)
         setValueToBeat(newValueToBeat);
         setNumOfCardsNeeded(1);
     }, [])
@@ -103,7 +91,6 @@ const Board = ({ config }) => {
     }
 
     const selectOne = (uniqueId, playerId) => {
-        //console.log('select one', uniqueId, playerId)
         if (playerId !== currentPlayer) return;
         let playerHandIndex = playerId - 1;
         let playerHand = [...hands[playerHandIndex]];
@@ -118,7 +105,6 @@ const Board = ({ config }) => {
     }
 
     const selectAll = (uniqueId, playerId, deselectAll) => {
-        //console.log(deselectAll ? '=> deselect all' : 'select all', uniqueId);
         if (playerId !== currentPlayer) return;
         let playerHandIndex = playerId - 1;
         let handCopy = [...hands[playerHandIndex]];
@@ -139,7 +125,6 @@ const Board = ({ config }) => {
     }
 
     const clearAllSelections = (playerId) => {
-        //console.log('clear all selections')
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
         let hand = [...hands[index]];
@@ -147,7 +132,6 @@ const Board = ({ config }) => {
         hand = hand.map((card) => {
             return { ...card, isSelected: false };
         });
-        //hand[cardIndex].isSelected = !!hand[cardIndex].isSelected ? false : true;
         allHandsCopy[index] = hand;
         setHands(allHandsCopy);
         setSelectedAmount(0);
@@ -157,57 +141,22 @@ const Board = ({ config }) => {
         return numOfCardsNeeded === 0 || numOfCardsPlayed === numOfCardsNeeded;
     }
 
-    const getValueToBeat = () => {
-        // let discardCopy = [...discardPile];
-        // for (let i = 0; i <= numOfCardsNeeded; i++) {
-        //     let topCard = discardCopy.pop();
-        //     if (topCard.num !== 2)
-        //         return topCard.num;
-        // }
-        return lastMove[0].num;
-    }
-
     const isCardValueHigher = (nonJokerValue) => {
         let numericValueToBeat = getNumbericVTB(valueToBeat);
         return (nonJokerValue > numericValueToBeat)
     }
 
     const validateBeforePlay = (playedCards) => {
-        //console.log('Validate:playedCards:', playedCards)
         let isEnough = isEnoughCards(playedCards.length);
-        //console.log('isEnoughCards?', isEnough);
         let resp2 = checkIfPlayedCardsMatch(playedCards);
-        //console.log('do cards match each other?', resp2.isSet)
-        //console.log('isMaxed?', isMaxed)
         if (!isMaxed && resp2.isSet && isEnough) {
             let resp = checkIf2WasPlayed(playedCards);
-            console.log('cardToBeat ->',resp.isJokerPlayed, resp2.nonJokerValue)
+            console.log('cardToBeat ->', resp.isJokerPlayed, resp2.nonJokerValue)
             if (numOfCardsNeeded === 0) return { cardToBeat: resp.isJokerPlayed ? 2 : resp2.nonJokerValue, isValidated: true };
-            //console.log('isJokerPlayed?', resp.isJokerPlayed)
-            //console.log('onlyJokers?', resp.onlyJokers)
             if (resp.isJokerPlayed && resp.onlyJokers) {
-                //if (resp.onlyJokers) {
-                ////console.log(`numOfCardsNeeded(${numOfCardsNeeded}) === 0 || !isMaxed(${!isMaxed}) ? `)
-                // if (numOfCardsNeeded === 0 || !isMaxed) {
                 setMaxed(true);
-                //console.log('maxing!')
                 return { cardToBeat: 2, isValidated: true };
-                //}// else { //not only jokers, a mix
-                // return isCardValueHigher(resp2.nonJokerValue, valueToBeat)
-                // }
-            } else {
-                //console.log('else', resp2.nonJokerValue, valueToBeat)
-                return { cardToBeat: resp2.nonJokerValue, isValidated: isCardValueHigher(resp2.nonJokerValue, valueToBeat) }
-                // if (playedCards.length === 1) {
-                //     let playedValue = playedCards[0].value;
-                //     if (playedValue > valueToBeat) return true;
-                //     else return false;
-                // }
-                // if (playedCards.length > 1) {
-                //     if (resp2.nonJokerValue > valueToBeat)
-                //         return true;
-                // }
-            }
+            } else return { cardToBeat: resp2.nonJokerValue, isValidated: isCardValueHigher(resp2.nonJokerValue, valueToBeat) }
         }
         return { isValidated: false };
     }
@@ -215,10 +164,8 @@ const Board = ({ config }) => {
     const checkIfPlayedCardsMatch = (playedCards) => {
         let nonJokerValue;
         for (let card of playedCards) {
-            ////console.log('card.value-->', card.value)
             if (card.num !== 2) {
                 nonJokerValue = card.num;
-                ////console.log('nonJokerValue:', nonJokerValue)
             }
             if (!!nonJokerValue && card.num !== 2 && nonJokerValue !== card.num)
                 return { isSet: false, nonJokerValue };;
@@ -234,9 +181,7 @@ const Board = ({ config }) => {
     }
 
     const validateAfterPlay = (cardsRemainingInHand, playerId) => {
-        //if playerId's hand is empty => they win, game over
         if (cardsRemainingInHand.length === 0) {
-            //console.log(`player ${playerId} wins, hand is empty`);
             let winnersCopy = [...winners];
             let finishPlace = winnersCopy.length + 1;
             finishPlace = finishPlace === 1 ? '1st' : finishPlace === 2 ? '2nd' : finishPlace === 3 ? '3rd' : `${finishPlace}th`;
@@ -246,46 +191,31 @@ const Board = ({ config }) => {
         }
     }
 
-    //todo - add playerId as arg
     const playSelected = (playerId) => {
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
         let selectedCards = hands[index].filter(card => card.isSelected);
         let cardsRemainingInHand = hands[index].filter(card => !card.isSelected);
-        console.log('selectedCards ==>',selectedCards)
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
-            console.log('play is validated')
             selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
             let handsCopy = [...hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
-            console.log('discardPile ==>', [...discardPile, ...selectedCards])
             setDiscardPile([...discardPile, ...selectedCards]);
-            //console.log('new discard pile ==> ', [...discardPile, ...selectedCards])
-            console.log('lastMove =>', selectedCards)
             setLastMove(selectedCards);
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
-            // let vtb = getValueToBeat();
-            // console.log('new vtb >->', vtb)
-            // setValueToBeat(vtb);
             play.cardToBeat = getStringVTB(play.cardToBeat);
             setValueToBeat(play.cardToBeat);
-            console.log('new vtb >!>', play.cardToBeat)
             setSelectedAmount(0);
             nextTurn();
-            //console.log('-----------------------------------');
-        } else {
-            //console.log('cards dont match, cant play them together, or theyre too low', JSON.stringify(selectedCards))
         }
     }
 
-    //todo - add playerId as arg
     const pickupCards = (playerId) => {
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
-        //console.log('pickup cards playerId ==> ', playerId);
         if (discardPile.length === 0) return;
         let unselectedCards = hands[index].map(card => {
             return { ...card, isSelected: false };
@@ -297,7 +227,6 @@ const Board = ({ config }) => {
         setLastMove([]);
         setNumOfCardsNeeded(0);
         setValueToBeat(0);
-        console.log('new vtb >>', 0)
         setMaxed(false);
         nextTurn();
     }
@@ -308,8 +237,6 @@ const Board = ({ config }) => {
     }
 
     const sortHand = (playerId) => {
-        //console.log('sortHand playerId:', playerId)
-        //if (playerId !== currentPlayer) return;
         let allHandsCopy = [...hands];
         let playerHandIndex = playerId - 1;
         let playerHand = [...hands[playerHandIndex]];

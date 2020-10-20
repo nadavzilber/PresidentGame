@@ -14,11 +14,6 @@ function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit,
         borderStyle: "none"
     }
 
-    let lastMoveStyle = {
-        marginLeft: "-102px",
-        height: "200px"
-    }
-
     let buttonStyle = {
         fontSize: "10px",
         color: "red"
@@ -33,16 +28,6 @@ function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit,
     if (!!isFaceDown)
         cardStyle.backgroundColor = "green"
 
-    //if (isLastMove)
-    //  cardStyle = lastMoveStyle;
-    //todo: add suits to cards
-
-    //TODO - &clubs; &spades; &hearts; &diamonds;
-
-    // suit === 'diamond' && <div class="top undersuit">&diamonds;</div>
-    // suit === 'club' && <div class="top undersuit">&clubs;</div>
-    // suit === 'spade' && <div class="top undersuit">&spades;</div>
-
     return (
         <div>
             {!inDiscardPile && <button
@@ -50,7 +35,6 @@ function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit,
                 onClick={() => select && select(uniqueId, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
                 {!isSelected ? 'Select' : 'Deselect'} All {id}</button>}
 
-            {/* <div className={(isFaceDown ? 'facedown-card' : 'card')(isSelected ? 'selected' : '')} //style={cardStyle} */}
             <div className={`${isFaceDown ? 'facedown-card' : 'card'} ${isSelected ? 'selected' : ''}`}
                 onClick={() => select && select(uniqueId, playerId, 'one')}>
                 {!isFaceDown &&
