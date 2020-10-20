@@ -184,15 +184,6 @@ const Board = ({ config }) => {
         return numOfCardsNeeded === 0 || numOfCardsPlayed === numOfCardsNeeded;
     }
 
-    const getValueToBeat = () => {
-        let discardCopy = [...discardPile];
-        for (let i = 0; i <= numOfCardsNeeded; i++) {
-            let topCard = discardCopy.pop();
-            if (topCard.num !== 2)
-                return topCard.num;
-        }
-    }
-
     const isCardValueHigher = (nonJokerValue) => {
         let playedValue = valueToBeatToNumber(nonJokerValue)
         let vtb = valueToBeatToNumber(valueToBeat);
@@ -207,10 +198,10 @@ const Board = ({ config }) => {
         console.log('do cards match each other?', resp2.isSet)
         console.log('isMaxed?', isMaxed)
         if (!isMaxed && resp2.isSet && isEnough) {
-            let resp = checkIf2WasPlayed(playedCards);
+            let resp = checkIfJokerWasPlayed(playedCards);
             let cardToBeatString = valueToBeatToString(resp2.nonJokerValue)
             console.log('resp2.nonJokerValue:', resp2.nonJokerValue)
-            if (numOfCardsNeeded === 0) return { cardToBeat: cardToBeatString, isValidated: true };
+            if (numOfCardsNeeded === 0 && valueToBeat === 0) return { cardToBeat: cardToBeatString, isValidated: true };
             // console.log('1 setting vtb', cardToBeatString)
             // setValueToBeat(cardToBeatString);
             console.log('isJokerPlayed?', resp.isJokerPlayed)
@@ -256,7 +247,7 @@ const Board = ({ config }) => {
         return { isSet: true, nonJokerValue };
     }
 
-    const checkIf2WasPlayed = (playedCards) => {
+    const checkIfJokerWasPlayed = (playedCards) => {
         let nonJokers = playedCards.filter(card => card.num !== 2);
         if (nonJokers.length !== playedCards.length) {
             return { isJokerPlayed: true, nonJokers, onlyJokers: nonJokers == 0 };

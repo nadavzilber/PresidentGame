@@ -10,6 +10,7 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         padding: "4px",
         marginLeft: "10px",
         marginRight: "10px",
+        cursor: "pointer"
     }
 
     //console.log('playerHand cards:',cards)

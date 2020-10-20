@@ -21,7 +21,8 @@ function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit,
 
     let buttonStyle = {
         fontSize: "10px",
-        color: "red"
+        color: "red",
+        marginBottom: "10px"
     }
 
     if (!!inDiscardPile) {
