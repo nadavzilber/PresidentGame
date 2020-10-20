@@ -268,7 +268,8 @@ const Board = ({ config }) => {
         let cardsRemainingInHand = hands[index].filter(card => !card.isSelected);
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
-            selectedCards.map(card => ({ ...card, isSelected: false }));
+            selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
+            console.log('selectedCards:::::::::',selectedCards)
             let handsCopy = [...hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
