@@ -32,8 +32,12 @@ const Board = ({ config }) => {
     //useResetRecoilState(): Use this hook to reset an atom to its default value.
 
     useEffect(() => {
+        //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
+        //its rendering the last element of the discard pile instead of the separate array
+        //maybe i need to check what im sending to setLastMove in the startup flow
+
         //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
-        console.log('useEffect')
+        console.log('Board useEffect')
         let deck = Deck.createDeck();
         let numOfCardsInHand = 8;
         let numOfPlayedCardsInDiscard = 5;
@@ -64,26 +68,26 @@ const Board = ({ config }) => {
             discard.push(card);
         }
         let randomIndex = Math.floor(Math.random() * deck.length);
-        let lastMoveCard = deck.splice(randomIndex, 1);
+        let lastMoveCard = deck.splice(randomIndex, 1)[0];
         //let lastMoveCard = { ...card };
         //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
-        console.log('initial random hands:', JSON.stringify([hand1, hand2]));
-        console.log('and random discard pile / lastMoveCard:', JSON.stringify(discard), JSON.stringify(lastMoveCard));
-        let newValueToBeat = valueToBeatToString(discard[discard.length - 1].num);
-        console.log('newValueToBeat:', newValueToBeat)
-        //setHands([hand1, hand2]);
-        setHands([hand1, hand2]);
-        console.log('discard ==>', discard)
-        setDiscardPile(discard);
-        setLastMove(lastMoveCard);
-        console.log('3 setting vtb', newValueToBeat)
+        console.log('Initial randomly generated hands:', [hand1, hand2]);
+        console.log('Initial randomly generated discard pile:', discard);
+        console.log('Initial randomly generated lastMoveCard: ', lastMoveCard);
+        let newValueToBeat = valueToBeatToString(lastMoveCard.num);
+        console.log('Initial newValueToBeat:', newValueToBeat)
         setValueToBeat(newValueToBeat);
+        if (newValueToBeat === 'Joker') setMaxed(true);
+        setLastMove([lastMoveCard]);
+        setHands([hand1, hand2]);
+        console.log('Initial DiscardPile ==>', discard)
+        setDiscardPile(discard);
         setNumOfCardsNeeded(1);
-    }, [])
+    }, []);
 
     const valueToBeatToString = (vtb) => {
         console.log('valueToBeatToString:', vtb)
-        if (vtb === 2) return 'Joker';
+        if (vtb === 2 || vtb === 15) return 'Joker';
         if (vtb === 14) return 'Ace';
         if (vtb === 13) return 'King';
         if (vtb === 12) return 'Queen';
@@ -92,7 +96,7 @@ const Board = ({ config }) => {
     }
 
     const valueToBeatToNumber = (vtb) => {
-        console.log('valueToBeatToString:', vtb)
+        console.log('valueToBeatToNumber:', vtb)
         if (vtb === 'Joker') return 2;
         if (vtb === 'Ace') return 14;
         if (vtb === 'King') return 13;
@@ -340,6 +344,7 @@ const Board = ({ config }) => {
 
     return (
         <div className="board" >
+            
             <div className="board-center" >
                 <GameHost currentPlayer={currentPlayer}
                     numOfCardsNeeded={numOfCardsNeeded}
@@ -350,6 +355,7 @@ const Board = ({ config }) => {
                 <DiscardPile cards={discardPile}
                     lastMove={lastMove} />
             </div>
+
             <div className="board-footer" > {
                 hands && hands.map((hand, index) => (
                     <PlayerHand stackType="hand"

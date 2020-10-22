@@ -1,11 +1,16 @@
-.discard {
-    /* position: relative; */
+/*.discard {
+     position: relative;
+} */
+
+.last-move-container {
+    display: inline-flex;
 }
 
-.facedown-cards {
-    width: 100%;
+.facedown-cards-container {
+    /* width: 100%;
     position: relative;
-    bottom: 115px;
+    bottom: 115px; */
+    margin: 25px;
 }
 
 .hand {
@@ -13,14 +18,18 @@
     display: flex;
     justify-content: space-between;
 }
-.player-msgs-container {
+.player-msgs-container, .gamehost-container, .discard-pile-container {
     border: solid 1px black;
     display: flex;
     justify-content: center;
     color: indigo;
 }
 
-.player-msgs-container label {
+.gamehost-container {
+    margin-bottom: 30px;
+}
+
+.player-msgs-container label, .gamehost-container label {
     margin: 3px;
     padding: 3px;
 }
