@@ -1,11 +1,16 @@
-.discard {
-    /* position: relative; */
+/*.discard {
+     position: relative;
+} */
+
+.last-move-container {
+    display: inline-flex;
 }
 
-.facedown-cards {
-    width: 100%;
+.facedown-cards-container {
+    /* width: 100%;
     position: relative;
-    bottom: 115px;
+    bottom: 115px; */
+    margin: 25px;
 }
 
 .hand {
@@ -13,10 +18,28 @@
     display: flex;
     justify-content: space-between;
 }
-
-.stack-title {
-    color: black;
+.player-msgs-container, .gamehost-container, .discard-pile-container {
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+    color: indigo;
 }
+
+.gamehost-container {
+    margin-bottom: 30px;
+}
+
+.player-msgs-container label, .gamehost-container label {
+    margin: 3px;
+    padding: 3px;
+}
+
+.player-buttons-container {
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+}
+
 
 .facedown-card,
 .card {
@@ -82,8 +105,11 @@
     opacity: 0.35;
     filter: alpha(opacity=35);
 }
+<<<<<<< HEAD
 
 .group {
     position: relative;
     border: 1px solid steelblue;
 }
+=======
+>>>>>>> temp-branch

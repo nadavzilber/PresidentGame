@@ -29,7 +29,15 @@ const Board = ({ config }) => {
     //useResetRecoilState(): Use this hook to reset an atom to its default value.
 
     useEffect(() => {
+        //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
+        //its rendering the last element of the discard pile instead of the separate array
+        //maybe i need to check what im sending to setLastMove in the startup flow
+
         //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
+<<<<<<< HEAD
+=======
+        console.log('Board useEffect')
+>>>>>>> temp-branch
         let deck = Deck.createDeck();
         let numOfCardsInHand = 8;
         let numOfPlayedCardsInDiscard = 5;
@@ -48,6 +56,10 @@ const Board = ({ config }) => {
         for (let i = 0; i < numOfCardsInHand; i++) {
             let randomIndex = Math.floor(Math.random() * deck.length);
             let card = deck.splice(randomIndex, 1)[0];
+<<<<<<< HEAD
+=======
+            // let cardCopy = { ...card };
+>>>>>>> temp-branch
             hand2.push(card);
         }
         let discard = [];
@@ -57,15 +69,30 @@ const Board = ({ config }) => {
             discard.push(card);
         }
         let randomIndex = Math.floor(Math.random() * deck.length);
+<<<<<<< HEAD
         let lastMoveCard = deck.splice(randomIndex, 1);
         let newValueToBeat = getStringVTB(lastMoveCard[0].num);
         setHands([hand1, hand2]);
-        setDiscardPile(discard);
-        setLastMove(lastMoveCard);
+=======
+        let lastMoveCard = deck.splice(randomIndex, 1)[0];
+        //let lastMoveCard = { ...card };
+        //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
+        console.log('Initial randomly generated hands:', [hand1, hand2]);
+        console.log('Initial randomly generated discard pile:', discard);
+        console.log('Initial randomly generated lastMoveCard: ', lastMoveCard);
+        let newValueToBeat = valueToBeatToString(lastMoveCard.num);
+        console.log('Initial newValueToBeat:', newValueToBeat)
         setValueToBeat(newValueToBeat);
+        if (newValueToBeat === 'Joker') setMaxed(true);
+        setLastMove([lastMoveCard]);
+        setHands([hand1, hand2]);
+        console.log('Initial DiscardPile ==>', discard)
+>>>>>>> temp-branch
+        setDiscardPile(discard);
         setNumOfCardsNeeded(1);
-    }, [])
+    }, []);
 
+<<<<<<< HEAD
     const getStringVTB = (numericVtb) => {
         console.log('getStringVTB:', numericVtb)
         if (numericVtb === 2) return 'Joker';
@@ -84,6 +111,26 @@ const Board = ({ config }) => {
         if (stringVtb === 'Queen') return 12;
         if (stringVtb === 'Jack') return 11;
         return stringVtb;
+=======
+    const valueToBeatToString = (vtb) => {
+        console.log('valueToBeatToString:', vtb)
+        if (vtb === 2 || vtb === 15) return 'Joker';
+        if (vtb === 14) return 'Ace';
+        if (vtb === 13) return 'King';
+        if (vtb === 12) return 'Queen';
+        if (vtb === 11) return 'Jack';
+        return vtb;
+>>>>>>> temp-branch
+    }
+
+    const valueToBeatToNumber = (vtb) => {
+        console.log('valueToBeatToNumber:', vtb)
+        if (vtb === 'Joker') return 2;
+        if (vtb === 'Ace') return 14;
+        if (vtb === 'King') return 13;
+        if (vtb === 'Queen') return 12;
+        if (vtb === 'Jack') return 11;
+        return vtb;
     }
 
     const select = (uniqueId, playerId, type) => {
@@ -142,21 +189,57 @@ const Board = ({ config }) => {
     }
 
     const isCardValueHigher = (nonJokerValue) => {
+<<<<<<< HEAD
         let numericValueToBeat = getNumbericVTB(valueToBeat);
         return (nonJokerValue > numericValueToBeat)
+=======
+        let playedValue = valueToBeatToNumber(nonJokerValue)
+        let vtb = valueToBeatToNumber(valueToBeat);
+        return (playedValue > vtb);
+>>>>>>> temp-branch
     }
 
     const validateBeforePlay = (playedCards) => {
         let isEnough = isEnoughCards(playedCards.length);
         let resp2 = checkIfPlayedCardsMatch(playedCards);
         if (!isMaxed && resp2.isSet && isEnough) {
+<<<<<<< HEAD
             let resp = checkIf2WasPlayed(playedCards);
             console.log('cardToBeat ->', resp.isJokerPlayed, resp2.nonJokerValue)
             if (numOfCardsNeeded === 0) return { cardToBeat: resp.isJokerPlayed ? 2 : resp2.nonJokerValue, isValidated: true };
+=======
+            let resp = checkIfJokerWasPlayed(playedCards);
+            let cardToBeatString = valueToBeatToString(resp2.nonJokerValue)
+            console.log('resp2.nonJokerValue:', resp2.nonJokerValue)
+            if (numOfCardsNeeded === 0 && valueToBeat === 0) return { cardToBeat: cardToBeatString, isValidated: true };
+            // console.log('1 setting vtb', cardToBeatString)
+            // setValueToBeat(cardToBeatString);
+            console.log('isJokerPlayed?', resp.isJokerPlayed)
+            console.log('onlyJokers?', resp.onlyJokers)
+>>>>>>> temp-branch
             if (resp.isJokerPlayed && resp.onlyJokers) {
                 setMaxed(true);
                 return { cardToBeat: 2, isValidated: true };
+<<<<<<< HEAD
             } else return { cardToBeat: resp2.nonJokerValue, isValidated: isCardValueHigher(resp2.nonJokerValue, valueToBeat) }
+=======
+                //}// else { //not only jokers, a mix
+                // return isCardValueHigher(resp2.nonJokerValue, valueToBeat)
+                // }
+            } else {
+                console.log('else', resp2.nonJokerValue, valueToBeat)
+                return { cardToBeat: resp2.nonJokerValue, isValidated: isCardValueHigher(resp2.nonJokerValue) }
+                // if (playedCards.length === 1) {
+                //     let playedValue = playedCards[0].value;
+                //     if (playedValue > valueToBeat) return true;
+                //     else return false;
+                // }
+                // if (playedCards.length > 1) {
+                //     if (resp2.nonJokerValue > valueToBeat)
+                //         return true;
+                // }
+            }
+>>>>>>> temp-branch
         }
         return { isValidated: false };
     }
@@ -173,7 +256,7 @@ const Board = ({ config }) => {
         return { isSet: true, nonJokerValue };
     }
 
-    const checkIf2WasPlayed = (playedCards) => {
+    const checkIfJokerWasPlayed = (playedCards) => {
         let nonJokers = playedCards.filter(card => card.num !== 2);
         if (nonJokers.length !== playedCards.length) {
             return { isJokerPlayed: true, nonJokers, onlyJokers: nonJokers == 0 };
@@ -199,6 +282,10 @@ const Board = ({ config }) => {
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
             selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
+<<<<<<< HEAD
+=======
+            console.log('selectedCards:::::::::', selectedCards)
+>>>>>>> temp-branch
             let handsCopy = [...hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
@@ -206,8 +293,14 @@ const Board = ({ config }) => {
             setLastMove(selectedCards);
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
+<<<<<<< HEAD
             play.cardToBeat = getStringVTB(play.cardToBeat);
             setValueToBeat(play.cardToBeat);
+=======
+            console.log('2 setting vtb', play.cardToBeat);
+            let vtb = valueToBeatToString(play.cardToBeat);
+            setValueToBeat(vtb);
+>>>>>>> temp-branch
             setSelectedAmount(0);
             nextTurn();
         }
@@ -226,6 +319,7 @@ const Board = ({ config }) => {
         setDiscardPile([]);
         setLastMove([]);
         setNumOfCardsNeeded(0);
+        console.log('4 setting vtb 0')
         setValueToBeat(0);
         setMaxed(false);
         nextTurn();
@@ -253,6 +347,7 @@ const Board = ({ config }) => {
 
     return (
         <div className="board" >
+            
             <div className="board-center" >
                 <GameHost currentPlayer={currentPlayer}
                     numOfCardsNeeded={numOfCardsNeeded}
@@ -263,6 +358,7 @@ const Board = ({ config }) => {
                 <DiscardPile cards={discardPile}
                     lastMove={lastMove} />
             </div>
+
             <div className="board-footer" > {
                 hands && hands.map((hand, index) => (
                     <PlayerHand stackType="hand"

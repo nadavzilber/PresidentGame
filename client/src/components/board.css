@@ -7,14 +7,15 @@
 
 .board-center {
     border: 1px solid black;
-    top: 200px;
-    height: 300px;
-    background-color: violet;
+    height: 250px;
+    background-color: lightsteelblue;
+    padding: 20px;
 }
 
 .board-footer {
     border: 1px solid black;
-    top: 500px;
-    height: 200px;
-    background-color: violet;
+    /* top: 500px;
+    height: 200px; */
+    background-color: darkgray;
+    padding: 20px;
 }

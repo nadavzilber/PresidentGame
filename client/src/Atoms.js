@@ -8,3 +8,11 @@ export const discardState = atom({
     key: 'discardState',
     default: [],
 });
+export const playerHandState = atom({
+    key: 'playerHandState',
+    default: [],
+});
+export const gameState = atom({
+    key: 'gameState',
+    default: {},
+})
