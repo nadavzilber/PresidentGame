@@ -13,17 +13,20 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         cursor: "pointer"
     }
 
-    //console.log('playerHand cards:',cards)
 
     //todo: add emotes button (rendered probably in gamehost)
     return (
         <div>
-            {playerId && <label className="stack-title">Player {playerId}'s hand</label>}
-            <button style={buttonStyle} onClick={() => pickupCards(playerId)}>Pick up cards</button>
-            <button style={buttonStyle} onClick={() => select(null, playerId, 'clearAll')}>Clear selection</button>
-            <button style={buttonStyle} onClick={() => playSelected(playerId)}>Play cards</button>
-            <button style={buttonStyle} onClick={() => sortHand(playerId)}>Sort hand</button>
-            {selectedAmount > 0 && <span>selected:{selectedAmount}</span>}
+            <div className="player-msgs-container">
+                <label>Player {playerId}'s hand</label>
+                <label>selectedAmount:{selectedAmount}</label>
+            </div>
+            <div className="player-buttons-container">
+                <button style={buttonStyle} onClick={() => pickupCards(playerId)}>Pick up cards</button>
+                <button style={buttonStyle} onClick={() => select(null, playerId, 'clearAll')}>Clear selection</button>
+                <button style={buttonStyle} onClick={() => playSelected(playerId)}>Play cards</button>
+                <button style={buttonStyle} onClick={() => sortHand(playerId)}>Sort hand</button>
+            </div>
             <div className={stackType}>
                 {cards && cards.map((card, index) => (
                     <Card key={index}

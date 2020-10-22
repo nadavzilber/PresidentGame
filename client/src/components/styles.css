@@ -13,10 +13,24 @@
     display: flex;
     justify-content: space-between;
 }
-
-.stack-title {
-    color: black;
+.player-msgs-container {
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+    color: indigo;
 }
+
+.player-msgs-container label {
+    margin: 3px;
+    padding: 3px;
+}
+
+.player-buttons-container {
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+}
+
 
 .facedown-card,
 .card {
