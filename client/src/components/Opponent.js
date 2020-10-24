@@ -4,9 +4,10 @@ import './styles.css';
 
 const Opponent = ({ name, cards, position, select, playerId }) => {
 
+    console.log('Opponent PROPS:', name, cards, position, select, playerId)
+
     return (
-        <div className={`opponent pos-${position}`}>
-            {name}
+        <>
             {cards && cards.map((card, index) => (
                 <Card key={index}
                     position={index}
@@ -19,7 +20,7 @@ const Opponent = ({ name, cards, position, select, playerId }) => {
                     playerId={playerId}
                     isSelected={card.isSelected} />
             ))}
-        </div>
+        </>
     )
 }
 

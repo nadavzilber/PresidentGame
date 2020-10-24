@@ -1,7 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import Board from './components/Board'
-import './App.css';
+import Game from './Game';
+//import './App.css';
 import {
   RecoilRoot,
   atom,
@@ -14,11 +15,12 @@ function App() {
   const config = { numberOfPlayers: 2 };
   return (
     <RecoilRoot>
-      <div className="App">
+     <Game />
+      {/* <div className="App">
         <header className="App-header">
           <Board config={config} />
         </header>
-      </div>
+      </div> */}
     </RecoilRoot>
   );
 }

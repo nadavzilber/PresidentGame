@@ -35,3 +35,160 @@
     transform: rotate(360deg);
   }
 }
+
+.last-move-container {
+  display: inline-flex;
+}
+
+.facedown-cards-container {
+  /* width: 100%;
+  position: relative;
+  bottom: 115px; */
+  margin: 25px;
+}
+
+/* .hand {
+  background-color: yellow;
+  display: flex;
+  justify-content: space-between;
+} */
+.player-msgs-container, .gamehost-container, .discard-pile-container {
+  border: solid 1px black;
+  display: flex;
+  justify-content: center;
+  color: indigo;
+}
+
+.gamehost-container {
+  margin-bottom: 45px;
+}
+
+.discard-pile-container {
+  border: none;
+}
+
+.player-msgs-container label, .gamehost-container label {
+  margin: 3px;
+  padding: 3px;
+}
+
+.player-buttons-container {
+  border: solid 1px black;
+  display: flex;
+  justify-content: center;
+}
+
+
+.facedown-card,
+.card {
+  width: 80px;
+  height: 100px;
+  border-style: solid;
+  border-width: thin;
+  border-color: black;
+}
+
+.facedown-card {
+  position: absolute;
+  background-color: rgb(206, 196, 172);
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color:black;
+}
+
+.card {
+  background-color: white;
+  position: relative;
+}
+
+.selected {
+  background-color: sandybrown;
+}
+
+.black {
+  color: black;
+}
+
+.suit {
+  font-size: 3em;
+  text-align: center;
+  line-height: 100px;
+  vertical-align: middle;
+}
+
+.bottom {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+}
+
+.top {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+
+.number {
+  font-size: 1em;
+}
+
+.undersuit {
+  font-size: 1.5em;
+  z-index: 0;
+  opacity: 0.35;
+  filter: alpha(opacity=35);
+}
+
+.opponents-container {
+  position: relative;
+}
+
+.opponent {
+  position: absolute;
+  border: black solid 1px;
+  background-color: lawngreen;
+}
+
+.pos-2 {
+  right: -160px;
+  top: -170px;
+}
+
+.pos-1 {
+  left: -160px;
+  top: -170px;
+}
+
+.pos-0 {
+  bottom: 110px;
+  right: 200px;
+  display: inline-flex;
+}
+
+.board {
+  border: 1px solid black;
+  margin: 20px;
+  width: 83%;
+  background-color: tomato;
+}
+
+.board-center {
+  border: 1px solid black;
+  height: 575px;
+  /* background-color: lightsteelblue; */
+  padding: 20px;
+}
+
+.board-footer {
+  border: 1px solid black;
+  height: 500px;
+  /* top: 500px;
+  height: 200px; */
+  /* background-color: darkgray; */
+  padding: 20px;
+}
