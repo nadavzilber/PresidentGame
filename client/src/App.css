@@ -36,16 +36,7 @@
   }
 }
 
-.last-move-container {
-  display: inline-flex;
-}
 
-.facedown-cards-container {
-  /* width: 100%;
-  position: relative;
-  bottom: 115px; */
-  margin: 25px;
-}
 
 /* .hand {
   background-color: yellow;
@@ -65,6 +56,7 @@
 
 .discard-pile-container {
   border: none;
+  position: relative;
 }
 
 .player-msgs-container label, .gamehost-container label {
@@ -108,10 +100,6 @@
 
 .selected {
   background-color: sandybrown;
-}
-
-.black {
-  color: black;
 }
 
 .suit {

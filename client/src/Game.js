@@ -7,7 +7,7 @@ import Deck from './Deck'
 import './components/styles.css';
 
 const Game = () => {
-    const [currentPlayer, setCurrentPlayer] = useState(0);
+    const [currentPlayer, setCurrentPlayer] = useState(1);
     const [hands, setHands] = useState([]);
     const [opponents, setOpponents] = useState([]);
     const [discardPile, setDiscardPile] = useState([]);
@@ -306,12 +306,12 @@ const Game = () => {
 
     return (
         <div className="app-container">
-            <div className="item1 horizontal">
+            <div className="opponent-top horizontal">
                 {opponents && opponents[1] && getOpponent(1)}</div>
-            <div className="item2">
+            <div className="opponent-left">
                 {opponents && opponents[0] && getOpponent(0)}
             </div>
-            <div className="item3">
+            <div className="board">
                 <GameHost currentPlayer={currentPlayer}
                     numOfCardsNeeded={numOfCardsNeeded}
                     valueToBeat={valueToBeat}
@@ -320,9 +320,9 @@ const Game = () => {
                 />
                 <DiscardPile cards={discardPile}
                     lastMove={lastMove} /></div>
-            <div className="item4">
+            <div className="opponent-right">
                 {opponents && opponents[2] && getOpponent(2)}</div>
-            <div className="item5">
+            <div className="my-hand">
                 {hands && (
                     <PlayerHand stackType="hand"
                         cards={hands[0]}

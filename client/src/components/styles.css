@@ -3,19 +3,19 @@
 } */
 
 
-.item1 { 
+.opponent-top { 
     grid-area: header;
  }
-.item2 {
+.opponent-left {
      grid-area: left; 
-     }
-.item3 { 
+}
+.board { 
     grid-area: main;
   }
-.item4 { 
+.opponent-right { 
     grid-area: right; 
  }
-.item5 { 
+.my-hand { 
     grid-area: bottom;
  }
 
@@ -24,8 +24,6 @@
   display: grid;
   grid-template-areas:
     'header header header header header'
-    'left main main main right'
-    'left main main main right'
     'left main main main right'
     'bottom bottom bottom bottom bottom';
   grid-gap: 10px;
@@ -36,8 +34,10 @@
 .app-container > div {
     background-color: rgba(255, 255, 255, 0.8);
     text-align: center;
-    padding: 20px 0;
+    padding: 5px 0;
     font-size: 30px;
+    margin: 0 auto;
+    max-height: 400px;
   }
 
 .horizontal {
@@ -45,6 +45,28 @@
     justify-content: space-between;
     flex-wrap: wrap;
 }
+
+.discard-pile-container {
+    border: none;
+    position: relative;
+  }
+
+.last-move-container {
+    display: inline-flex;
+    position: absolute;
+      left: 565px;
+      top: 165px;
+  }
+  
+  .facedown-cards-container {
+    /* width: 100%;
+    position: relative;
+    bottom: 115px; */
+    margin: 25px;
+    position: absolute;
+      left: 550px;
+      top: 150px;
+  }
 
 .facedown-card,
 .card {
@@ -71,6 +93,7 @@
 .card {
   background-color: white;
   position: relative;
+  cursor: pointer;
 }
 
 .selected {
@@ -107,6 +130,39 @@
   filter: alpha(opacity=35);
 }
 
-.opponent {
+/* .discard-pile-container .card, .discard-pile-container .facedown-card {
+    width: 160px;
+    height: 200px;
+  } */
 
-}
+  .player-msgs-container {
+    display: flex;
+    justify-content: center;
+  }
+
+
+  .player-msgs-container label, .gamehost-container label {
+    margin: 3px;
+    padding: 3px;
+  }
+
+  .player-buttons-container {
+    border: solid 1px black;
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+  }
+
+button {
+    border: 2.5px solid black;
+    font-size: 17px;
+    background-color: orange;
+    color: black;
+    margin: 10px;
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    color: white;
+  }

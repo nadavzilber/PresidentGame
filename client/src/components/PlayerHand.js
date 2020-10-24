@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { handsState, discardState } from '../Atoms';
 
 function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCards, sortHand, selectedAmount }) {
-    console.log('PlayerHand cards:',cards )
+    console.log('PlayerHand cards:', cards)
 
     //todo: change to cards instead of hands...
     //but how do i subscribe to 1 specific player hand?
@@ -39,15 +39,17 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
     //todo: add emotes button (rendered probably in gamehost)
     return (
         <div>
-            <div className="player-msgs-container">
-                <label>Player {playerId}'s hand</label>
-                <label>selectedAmount:{selectedAmount}</label>
-            </div>
-            <div className="player-buttons-container">
-                <button style={buttonStyle} onClick={() => pickupCards(playerId)}>Pick up cards</button>
-                <button style={buttonStyle} onClick={() => select(null, playerId, 'clearAll')}>Clear selection</button>
-                <button style={buttonStyle} onClick={() => playSelected(playerId)}>Play cards</button>
-                <button style={buttonStyle} onClick={() => sortHand(playerId)}>Sort hand</button>
+            <div>
+                <div className="player-msgs-container">
+                    <label>Player {playerId}'s hand</label>
+                    <label>selectedAmount:{selectedAmount}</label>
+                </div>
+                <div className="player-buttons-container">
+                    <button onClick={() => pickupCards(playerId)}>Pick up cards</button>
+                    <button onClick={() => select(null, playerId, 'clearAll')}>Clear selection</button>
+                    <button onClick={() => playSelected(playerId)}>Play cards</button>
+                    <button onClick={() => sortHand(playerId)}>Sort hand</button>
+                </div>
             </div>
             <div className="horizontal">
                 {cards && cards.map((card, index) => (
