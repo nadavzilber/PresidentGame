@@ -1,21 +1,22 @@
 .board {
     border: 1px solid black;
-    width: 1140px;
-    height: 840px;
-    background-color: wheat;
+    margin: 20px;
+    width: 83%;
+    background-color: tomato;
 }
 
 .board-center {
     border: 1px solid black;
-    height: 250px;
-    background-color: lightsteelblue;
+    height: 575px;
+    /* background-color: lightsteelblue; */
     padding: 20px;
 }
 
 .board-footer {
     border: 1px solid black;
+    height: 500px;
     /* top: 500px;
     height: 200px; */
-    background-color: darkgray;
+    /* background-color: darkgray; */
     padding: 20px;
 }

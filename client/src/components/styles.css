@@ -26,7 +26,11 @@
 }
 
 .gamehost-container {
-    margin-bottom: 30px;
+    margin-bottom: 45px;
+}
+
+.discard-pile-container {
+    border: none;
 }
 
 .player-msgs-container label, .gamehost-container label {
@@ -105,11 +109,29 @@
     opacity: 0.35;
     filter: alpha(opacity=35);
 }
-<<<<<<< HEAD
 
-.group {
+.opponents-container {
     position: relative;
-    border: 1px solid steelblue;
 }
-=======
->>>>>>> temp-branch
+
+.opponent {
+    position: absolute;
+    border: black solid 1px;
+    background-color: lawngreen;
+}
+
+.pos-2 {
+    right: -160px;
+    top: -170px;
+}
+
+.pos-1 {
+    left: -160px;
+    top: -170px;
+}
+
+.pos-0 {
+    bottom: 110px;
+    right: 200px;
+    display: inline-flex;
+}
