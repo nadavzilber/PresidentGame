@@ -14,5 +14,9 @@ export const playerHandState = atom({
 });
 export const gameState = atom({
     key: 'gameState',
-    default: {},
+    default: { stage: "lobby" },
+})
+export const lobbyState = atom({
+    key: "lobbyState",
+    default: {}
 })

@@ -2,7 +2,10 @@ import React from 'react';
 import logo from './logo.svg';
 import Board from './components/Board'
 import Game from './Game';
+import Lobby from './components/Lobby'
+import { connect } from './Socket';
 //import './App.css';
+import President from './components/President'
 import {
   RecoilRoot,
   atom,
@@ -12,10 +15,12 @@ import {
 } from 'recoil';
 
 function App() {
-  const config = { numberOfPlayers: 2 };
+  // const config = { numberOfPlayers: 2 };
+  // connect();
   return (
     <RecoilRoot>
-     <Game />
+      <President />
+
       {/* <div className="App">
         <header className="App-header">
           <Board config={config} />
