@@ -14,9 +14,7 @@ const Lobby = ({ players, actions }) => {
 
     const onClickHandler = (name, e) => {
         e.preventDefault();
-        console.log('onClick name:', name)
-        let resp = actions.connect(name);
-        console.log('resp:', resp)
+        actions.connect(name);
     }
 
     return (
@@ -25,6 +23,7 @@ const Lobby = ({ players, actions }) => {
                 <input value={name} onChange={(e) => setName(e.target.value)} />
                 <button disabled={name === ""} onClick={(e) => onClickHandler(name, e)}>connect</button>
                 <button disabled={name === ""} onClick={() => actions.test(name)}>test</button>
+                <button disabled={!game.players ? true : false} onClick={() => actions.startGame()}>start</button>
             </>
             {players && players.map((player, index) => <div key={index}>{player.name}</div>)}
         </div>

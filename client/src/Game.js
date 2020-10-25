@@ -5,14 +5,17 @@ import GameHost from './components/GameHost';
 import DiscardPile from './components/DiscardPile';
 import Deck from './Deck'
 import './components/styles.css';
+import { gameState } from './Atoms';
+import { useRecoilState } from 'recoil';
 
 const Game = () => {
+    const [state, setGameState] = useRecoilState(gameState)
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [hands, setHands] = useState([]);
     const [opponents, setOpponents] = useState([]);
     const [discardPile, setDiscardPile] = useState([]);
 
-    const numberOfPlayers = 2;
+    let numberOfPlayers = 2;
 
     const [numOfCardsNeeded, setNumOfCardsNeeded] = useState(0);
     const [isMaxed, setMaxed] = useState(false);
@@ -33,7 +36,7 @@ const Game = () => {
         let numOfCardsInHand = 8;
         let numOfPlayedCardsInDiscard = 5;
         let newHands = [];//{ hand1: [], hand2: [], hand3: [], hand4: [] };
-        for (let player = 1; player <= 4; player++) {
+        for (let player = 1; player <= numberOfPlayers; player++) {
             let currentHand = [];
             for (let i = 0; i < numOfCardsInHand; i++) {
                 let randomIndex = Math.floor(Math.random() * deck.length);

@@ -30,25 +30,44 @@ io.on("connection", (socket) => {
 
   //todo - need to socket.broadcast or figure out the right method to send to the right clients
 
+  socket.on('create-room', (room) => {
+    console.log('create room:', room)
+    socket.join(room);
+  });
+
   socket.on("join-game", (name) => {
     console.log(name, 'has joined the game')
     const sessionID = socket.id;
     console.log('sessionID:', sessionID);
-    state.clients.push({ name, sessionID });
-    socket.emit("on-join", state.clients);
+    let clientIDs = state.clients.map(client => client.sessionID);
+    console.log('clientIDs.includes(sessionID)?', clientIDs.includes(sessionID))
+    if (clientIDs.includes(sessionID))
+      // sending to all clients in 'game' room, including sender
+      io.in('lobby').emit('on-join', { error: "This sessionID already joined" });
+    //socket.emit("on-join", { error: "This sessionID already joined" });
+    else {
+      state.clients.push({ name, sessionID });
+      //socket.emit("on-join", { clients: state.clients });
+      io.in('lobby').emit('on-join', { clients: state.clients });
+    }
+
+    //socket.emit("on-join", state.clients);
   });
   socket.on("start-game", () => {
-    socket.emit('start-game', state.clients)
+    console.log('start-game');
+    io.in('lobby').emit('start-game', { clients: state.clients });
   })
   socket.on("test", (name) => {
     console.log('TEST name:', name);
-    socket.emit("getState", state)
+    //socket.emit("getState", state)
+    io.in('lobby').emit('get-state', { state });
   });
   socket.on("play-cards", (playedCards) => {
     console.log('play-cards:', playedCards);
     let cardIDs = playedCards.map(card => card.id);
     state.cards[activePlayerId] = state.cards[activePlayerId - 1].filter(card => cardIDs.includes(card.id))
-    socket.emit("on-play", state)
+    //socket.emit("on-play", state)
+    io.in('lobby').emit('play-cards', { state });
   })
 
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gameState } from '../Atoms';
 import Lobby from './Lobby';
 import Game from '../Game';
@@ -14,6 +14,14 @@ const socket = openSocket('http://localhost:5000');
 
 const President = () => {
     const [game, setGame] = useRecoilState(gameState);
+    useEffect(() => {
+        console.log('useEffects createRoom:lobby')
+        createRoom("lobby");
+    }, [])
+
+    const createRoom = (room) => {
+        socket.emit('create-room', room);
+    }
 
     const connect = (name) => {
         console.log('join-game, name:', name)
@@ -27,24 +35,40 @@ const President = () => {
         console.log('test emitted')
     }
 
-    const lobbyActions = { connect: connect, test: test };
+    const startGame = () => {
+        console.log('startGame')
+        socket.emit('start-game');
+    }
+
+    const lobbyActions = { connect, test, startGame };
 
 
     //INCOMING
-    socket.on("on-join", (clients) => {
-        console.log('on-join clients:', clients)
-        let stateCopy = Object.assign({}, game);
-        stateCopy.players = clients;
-        setGame(stateCopy);
-    })
+    socket.on("on-join", (response) => {
+        if (response.error) {
+            console.log('Error:', response.error);
+        } else {
+            console.log('on-join clients:', response.clients)
+            let stateCopy = Object.assign({}, game);
+            stateCopy.players = response.clients;
+            setGame(stateCopy);
+        }
+    });
 
     socket.on('connection', (response) => {
         console.log('on connection : response:', response)
     });
 
-    socket.on('getState', state => {
-        console.log('getState:', state)
+    socket.on('get-state', state => {
+        console.log('get-state:', state)
     });
+
+    socket.on('start-game', response => {
+        console.log('starting the game', response)
+        let stateCopy = Object.assign({}, game);
+        stateCopy.stage = "game";
+        setGame(stateCopy);
+    })
 
 
     return (
