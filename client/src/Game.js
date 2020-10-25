@@ -251,21 +251,21 @@ const Game = ({ actions }) => {
         let cardsRemainingInHand = state.hands[index].filter(card => !card.isSelected);
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
-            selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
-            console.log('selectedCards:::::::::', selectedCards)
-            let handsCopy = [...state.hands];
-            handsCopy[index] = cardsRemainingInHand;
-            setHands(handsCopy);
-            setDiscardPile([...state.discard, ...selectedCards]);
-            setLastMove(selectedCards);
-            setNumOfCardsNeeded(selectedCards.length);
-            validateAfterPlay(cardsRemainingInHand, playerId);
-            console.log('2 setting vtb', play.cardToBeat);
-            let vtb = valueToBeatToString(play.cardToBeat);
-            setValueToBeat(vtb);
-            setSelectedAmount(0);
-            nextTurn();
-            actions.makeMove({ type: 'playCards', play: selectedCards });
+            console.log('play is validated')
+            //selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
+            //let handsCopy = [...state.hands];
+            //handsCopy[index] = cardsRemainingInHand;
+            //setGameState({ ...state, hands: handsCopy });
+            //setDiscardPile([...state.discard, ...selectedCards]);
+            //setLastMove(selectedCards);
+            //setNumOfCardsNeeded(selectedCards.length);
+            // validateAfterPlay(cardsRemainingInHand, playerId);
+            // console.log('2 setting vtb', play.cardToBeat);
+            // let vtb = valueToBeatToString(play.cardToBeat);
+            // setValueToBeat(vtb);
+            // setSelectedAmount(0);
+            // nextTurn();
+            actions.makeMove({ type: 'playCards', played: selectedCards });
         }
     }
 

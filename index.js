@@ -73,13 +73,15 @@ io.on("connection", (socket) => {
     //socket.emit("getState", state)
     io.in('lobby').emit('get-state', { state });
   });
+
   socket.on("make-move", (move) => {
     console.log('makeMove:', move);
     if (move.type === "playCards") {
-      let playedCardIDs = move.played.map(card => card.id);
-      console.log('state.hands:', state.hands);
-      state.hands[state.activePlayerId] = state.hands[state.activePlayerId - 1].filter(card => playedCardIDs.includes(card.id))
-      state.discard.push(...move.played)
+      playCards(move);
+      //let playedCardIDs = move.played.map(card => card.id);
+      //console.log('state.hands:', state.hands);
+      //state.hands[state.activePlayerId] = state.hands[state.activePlayerId - 1].filter(card => playedCardIDs.includes(card.id))
+      //state.discard.push(...move.played)
       //socket.emit("on-play", state)
       //TODO: check if maxedOut (if played only 2 or 2s) then ==> state.isMaxed=true;
 
@@ -97,7 +99,31 @@ io.on("connection", (socket) => {
 const nextTurn = () => {
   state.activePlayerId = state.activePlayerId + 1 > state.clients.length ? 1 : state.activePlayerId;
 }
+const playCards = (data) => {
+  let playedCard = data.played.map(card => ({ ...card, isSelected: false }));
+//TODO: solve bug
+  //   discard: [state.discard, ...data.played],
+//   ^
 
+// ReferenceError: state is not defined
+  newState = {
+    discard: [...state.discard, ...data.played],
+    lastMove: playedCard,
+    numOfCardsNeeded: playedCard.length,
+    vtb: valueToBeatToString(data.cardToBeat)
+  }
+  Object.assign(state, newState);
+  //setDiscardPile([...state.discard, ...selectedCards]);
+  //setLastMove(selectedCards);
+  //setNumOfCardsNeeded(selectedCards.length);
+  // validateAfterPlay(cardsRemainingInHand, playerId);
+  // console.log('2 setting vtb', play.cardToBeat);
+  // let vtb = valueToBeatToString(play.cardToBeat);
+  // setValueToBeat(vtb);
+  // setSelectedAmount(0);
+  // nextTurn();
+
+}
 app.use(router);
 
 server.listen(port, () => console.log(`Server has started on port ${port}`));
