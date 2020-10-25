@@ -28,12 +28,14 @@ io.on("connection", (socket) => {
     playerData: {}
   };
 
+  //todo - need to socket.broadcast or figure out the right method to send to the right clients
+
   socket.on("join-game", (name) => {
     console.log(name, 'has joined the game')
     const sessionID = socket.id;
-    console.log('sessionID:', sessionID)
+    console.log('sessionID:', sessionID);
     state.clients.push({ name, sessionID });
-    socket.emit("on-join", state.clients)
+    socket.emit("on-join", state.clients);
   });
   socket.on("start-game", () => {
     socket.emit('start-game', state.clients)

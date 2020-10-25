@@ -3,16 +3,9 @@ import logo from './logo.svg';
 import Board from './components/Board'
 import Game from './Game';
 import Lobby from './components/Lobby'
-import { connect } from './Socket';
 //import './App.css';
 import President from './components/President'
-import {
-  RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 function App() {
   // const config = { numberOfPlayers: 2 };
