@@ -40,8 +40,13 @@ const President = () => {
         socket.emit('start-game');
     }
 
-    const lobbyActions = { connect, test, startGame };
+    const makeMove = (data) => {
+        console.log('makeMove')
+        socket.emit('make-move', data)
+    }
 
+    const lobbyActions = { connect, test, startGame };
+    const gameActions = { makeMove };
 
     //INCOMING
     socket.on("on-join", (response) => {
@@ -63,12 +68,19 @@ const President = () => {
         console.log('get-state:', state)
     });
 
-    socket.on('start-game', response => {
-        console.log('starting the game', response)
+    socket.on('update', newState => {
+        console.log('update received', newState)
         let stateCopy = Object.assign({}, game);
-        stateCopy.stage = "game";
+        stateCopy = { ...stateCopy, ...newState }
         setGame(stateCopy);
     })
+
+    socket.on("play-cards", data => {
+        console.log('play-cards', data);
+        let stateCopy = Object.assign({}, game);
+        stateCopy.cards = data.hands;
+        setGame(stateCopy);
+    });
 
 
     return (
@@ -76,7 +88,7 @@ const President = () => {
             {game && game.stage === "lobby" &&
                 <Lobby players={game.players} actions={lobbyActions} />}
             {game && game.stage === "game" &&
-                <Game />}
+                <Game actions={gameActions} />}
         </div>
     )
 }

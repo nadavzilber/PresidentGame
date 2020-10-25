@@ -11,6 +11,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+const initGame = require('./cards');
+
 io.on("connection", (socket) => {
   console.log("We have a new connection!");
 
@@ -21,7 +23,7 @@ io.on("connection", (socket) => {
   const state = {
     clients: [],
     activePlayerId: 1,
-    discardPile: [],
+    discard: [],
     lastMove: [],
     vtb: 0,
     hands: [],
@@ -55,22 +57,46 @@ io.on("connection", (socket) => {
   });
   socket.on("start-game", () => {
     console.log('start-game');
-    io.in('lobby').emit('start-game', { clients: state.clients });
+    let newState = initGame(state.clients);
+    Object.assign(state, newState);
+    console.log('new full state:', state)
+    io.in('lobby').emit('start-game', { state });
+    state.clients.forEach((client) => {
+      // sending to individual socketid (private message)
+      io.to(client.sessionID).emit('update', state);
+    })
   })
+
+
   socket.on("test", (name) => {
     console.log('TEST name:', name);
     //socket.emit("getState", state)
     io.in('lobby').emit('get-state', { state });
   });
-  socket.on("play-cards", (playedCards) => {
-    console.log('play-cards:', playedCards);
-    let cardIDs = playedCards.map(card => card.id);
-    state.cards[activePlayerId] = state.cards[activePlayerId - 1].filter(card => cardIDs.includes(card.id))
-    //socket.emit("on-play", state)
-    io.in('lobby').emit('play-cards', { state });
-  })
+  socket.on("make-move", (move) => {
+    console.log('makeMove:', move);
+    if (move.type === "playCards") {
+      let playedCardIDs = move.played.map(card => card.id);
+      console.log('state.hands:', state.hands);
+      state.hands[state.activePlayerId] = state.hands[state.activePlayerId - 1].filter(card => playedCardIDs.includes(card.id))
+      state.discard.push(...move.played)
+      //socket.emit("on-play", state)
+      //TODO: check if maxedOut (if played only 2 or 2s) then ==> state.isMaxed=true;
+
+    } else if (move.type === "pickupCards") {
+      state.hands[state.activePlayerId].push(...discard);
+      state.discard = [];
+    }
+    nextTurn();
+    console.log('emitting an update')
+    io.in('lobby').emit('update', { state });
+  });
 
 });
+
+const nextTurn = () => {
+  state.activePlayerId = state.activePlayerId + 1 > state.clients.length ? 1 : state.activePlayerId;
+}
 
 app.use(router);
 

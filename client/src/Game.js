@@ -8,7 +8,7 @@ import './components/styles.css';
 import { gameState } from './Atoms';
 import { useRecoilState } from 'recoil';
 
-const Game = () => {
+const Game = ({ actions }) => {
     const [state, setGameState] = useRecoilState(gameState)
     const [currentPlayer, setCurrentPlayer] = useState(1);
     const [hands, setHands] = useState([]);
@@ -25,69 +25,69 @@ const Game = () => {
     const [gameMsgs, setGameMsgs] = useState();
     const [winners, setWinners] = useState([]);
 
-    useEffect(() => {
-        //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
-        //its rendering the last element of the discard pile instead of the separate array
-        //maybe i need to check what im sending to setLastMove in the startup flow
+    // useEffect(() => {
+    //     //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
+    //     //its rendering the last element of the discard pile instead of the separate array
+    //     //maybe i need to check what im sending to setLastMove in the startup flow
 
-        //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
-        console.log('Board useEffect')
-        let deck = Deck.createDeck();
-        let numOfCardsInHand = 8;
-        let numOfPlayedCardsInDiscard = 5;
-        let newHands = [];//{ hand1: [], hand2: [], hand3: [], hand4: [] };
-        for (let player = 1; player <= numberOfPlayers; player++) {
-            let currentHand = [];
-            for (let i = 0; i < numOfCardsInHand; i++) {
-                let randomIndex = Math.floor(Math.random() * deck.length);
-                let card = deck.splice(randomIndex, 1)[0];
-                currentHand.push(card);
-            }
-            newHands.push(currentHand);
-        }
-        console.log('newHands ===>', newHands)
+    //     //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
+    //     console.log('Board useEffect')
+    //     let deck = Deck.createDeck();
+    //     let numOfCardsInHand = 8;
+    //     let numOfPlayedCardsInDiscard = 5;
+    //     let newHands = [];//{ hand1: [], hand2: [], hand3: [], hand4: [] };
+    //     for (let player = 1; player <= numberOfPlayers; player++) {
+    //         let currentHand = [];
+    //         for (let i = 0; i < numOfCardsInHand; i++) {
+    //             let randomIndex = Math.floor(Math.random() * deck.length);
+    //             let card = deck.splice(randomIndex, 1)[0];
+    //             currentHand.push(card);
+    //         }
+    //         newHands.push(currentHand);
+    //     }
+    //     console.log('newHands ===>', newHands)
 
-        // let hand2 = [];
-        // for (let i = 0; i < numOfCardsInHand; i++) {
-        //     let randomIndex = Math.floor(Math.random() * deck.length);
-        //     let card = deck.splice(randomIndex, 1)[0];
-        //     // let cardCopy = { ...card };
-        //     hand2.push(card);
-        // }
-        let discard = [];
-        for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
-            let randomIndex = Math.floor(Math.random() * deck.length);
-            let card = deck.splice(randomIndex, 1)[0];
-            discard.push(card);
-        }
-        let randomIndex = Math.floor(Math.random() * deck.length);
-        let lastMoveCard = deck.splice(randomIndex, 1)[0];
-        //let lastMoveCard = { ...card };
-        //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
-        console.log('Initial randomly generated hands:', [...newHands]);
-        console.log('Initial randomly generated discard pile:', discard);
-        console.log('Initial randomly generated lastMoveCard: ', lastMoveCard);
-        let newValueToBeat = valueToBeatToString(lastMoveCard.num);
-        console.log('Initial newValueToBeat:', newValueToBeat)
-        setValueToBeat(newValueToBeat);
-        if (newValueToBeat === 'Joker') setMaxed(true);
-        setLastMove([lastMoveCard]);
-        setHands([...newHands]);
-        console.log('Initial DiscardPile ==>', discard)
-        setDiscardPile(discard);
-        setNumOfCardsNeeded(1);
-        let opps = [
-            { name: "moshe" },
-            { name: "donald" },
-            { name: "robin" }
-        ];
-        setOpponents(opps);
-        console.log('opponents:', opps)
-    }, []);
+    //     // let hand2 = [];
+    //     // for (let i = 0; i < numOfCardsInHand; i++) {
+    //     //     let randomIndex = Math.floor(Math.random() * deck.length);
+    //     //     let card = deck.splice(randomIndex, 1)[0];
+    //     //     // let cardCopy = { ...card };
+    //     //     hand2.push(card);
+    //     // }
+    //     let discard = [];
+    //     for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
+    //         let randomIndex = Math.floor(Math.random() * deck.length);
+    //         let card = deck.splice(randomIndex, 1)[0];
+    //         discard.push(card);
+    //     }
+    //     let randomIndex = Math.floor(Math.random() * deck.length);
+    //     let lastMoveCard = deck.splice(randomIndex, 1)[0];
+    //     //let lastMoveCard = { ...card };
+    //     //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
+    //     console.log('Initial randomly generated hands:', [...newHands]);
+    //     console.log('Initial randomly generated discard pile:', discard);
+    //     console.log('Initial randomly generated lastMoveCard: ', lastMoveCard);
+    //     let newValueToBeat = valueToBeatToString(lastMoveCard.num);
+    //     console.log('Initial newValueToBeat:', newValueToBeat)
+    //     setValueToBeat(newValueToBeat);
+    //     if (newValueToBeat === 'Joker') setMaxed(true);
+    //     setLastMove([lastMoveCard]);
+    //     setHands([...newHands]);
+    //     console.log('Initial DiscardPile ==>', discard)
+    //     setDiscardPile(discard);
+    //     setNumOfCardsNeeded(1);
+    //     let opps = [
+    //         { name: "moshe" },
+    //         { name: "donald" },
+    //         { name: "robin" }
+    //     ];
+    //     setOpponents(opps);
+    //     console.log('opponents:', opps)
+    // }, []);
 
 
     const getOpponent = (id) => {
-        console.log('getOpponent id:', id, 'cards:', hands[id + 1])
+        // console.log('getOpponent id:', id, 'cards:', hands[id + 1])
         return <Opponent
             key={id}
             position={id + 1}
@@ -123,16 +123,16 @@ const Game = () => {
     }
 
     const selectOne = (uniqueId, playerId) => {
-        if (playerId !== currentPlayer) return;
+        if (playerId !== state.activePlayerId) return;
         let playerHandIndex = playerId - 1;
-        let playerHand = [...hands[playerHandIndex]];
+        let playerHand = [...state.hands[playerHandIndex]];
         const cardIndex = playerHand.findIndex(card => card.uniqueId === uniqueId);
         let card = { ...playerHand[cardIndex] };
         card.isSelected = !!card.isSelected ? false : true;
-        let allHandsCopy = [...hands];
+        let allHandsCopy = [...state.hands];
         playerHand[cardIndex] = card;
         allHandsCopy[playerHandIndex] = playerHand;
-        setHands(allHandsCopy);
+        setGameState({ ...state, hands: allHandsCopy });
         setSelectedAmount(card.isSelected ? selectedAmount + 1 : selectedAmount - 1);
     }
 
@@ -170,7 +170,7 @@ const Game = () => {
     }
 
     const isEnoughCards = (numOfCardsPlayed) => {
-        return numOfCardsNeeded === 0 || numOfCardsPlayed === numOfCardsNeeded;
+        return state.numOfCardsNeeded === 0 || numOfCardsPlayed === state.numOfCardsNeeded;
     }
 
     const isCardValueHigher = (nonJokerValue) => {
@@ -182,17 +182,17 @@ const Game = () => {
     const validateBeforePlay = (playedCards) => {
         let isEnough = isEnoughCards(playedCards.length);
         let resp2 = checkIfPlayedCardsMatch(playedCards);
-        if (!isMaxed && resp2.isSet && isEnough) {
+        if (!state.isMaxed && resp2.isSet && isEnough) {
             let resp = checkIfJokerWasPlayed(playedCards);
             let cardToBeatString = valueToBeatToString(resp2.nonJokerValue)
             console.log('resp2.nonJokerValue:', resp2.nonJokerValue)
-            if (numOfCardsNeeded === 0 && valueToBeat === 0) return { cardToBeat: cardToBeatString, isValidated: true };
+            if (state.numOfCardsNeeded === 0 && state.vtb === 0) return { cardToBeat: cardToBeatString, isValidated: true };
             // console.log('1 setting vtb', cardToBeatString)
             // setValueToBeat(cardToBeatString);
             console.log('isJokerPlayed?', resp.isJokerPlayed)
             console.log('onlyJokers?', resp.onlyJokers)
             if (resp.isJokerPlayed && resp.onlyJokers) {
-                setMaxed(true);
+                //setMaxed(true); console.log("todo: solve this")
                 return { cardToBeat: 2, isValidated: true };
                 //}// else { //not only jokers, a mix
                 // return isCardValueHigher(resp2.nonJokerValue, valueToBeat)
@@ -247,16 +247,16 @@ const Game = () => {
     const playSelected = (playerId) => {
         if (playerId !== currentPlayer) return;
         let index = playerId - 1;
-        let selectedCards = hands[index].filter(card => card.isSelected);
-        let cardsRemainingInHand = hands[index].filter(card => !card.isSelected);
+        let selectedCards = state.hands[index].filter(card => card.isSelected);
+        let cardsRemainingInHand = state.hands[index].filter(card => !card.isSelected);
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
             selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
             console.log('selectedCards:::::::::', selectedCards)
-            let handsCopy = [...hands];
+            let handsCopy = [...state.hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
-            setDiscardPile([...discardPile, ...selectedCards]);
+            setDiscardPile([...state.discard, ...selectedCards]);
             setLastMove(selectedCards);
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
@@ -265,8 +265,14 @@ const Game = () => {
             setValueToBeat(vtb);
             setSelectedAmount(0);
             nextTurn();
+            actions.makeMove({ type: 'playCards', play: selectedCards });
         }
     }
+
+    // const makeMove = (type) => {
+    //     const data = {type, vtb, hands, discard, lastMove, numOfCardsNeeded, currentPlayer };
+    //     actions.makeMove(data);
+    // }
 
     const pickupCards = (playerId) => {
         if (playerId !== currentPlayer) return;
@@ -315,26 +321,26 @@ const Game = () => {
                 {opponents && opponents[0] && getOpponent(0)}
             </div>
             <div className="board">
-                <GameHost currentPlayer={currentPlayer}
-                    numOfCardsNeeded={numOfCardsNeeded}
-                    valueToBeat={valueToBeat}
-                    isMaxed={isMaxed}
+                <GameHost currentPlayer={state.activePlayerId}
+                    numOfCardsNeeded={state.numOfCardsNeeded}
+                    valueToBeat={state.vtb}
+                    isMaxed={state.isMaxed}
                     gameMsgs={gameMsgs}
                 />
-                <DiscardPile cards={discardPile}
-                    lastMove={lastMove} /></div>
+                <DiscardPile cards={state.discard || []}
+                    lastMove={state.lastMove || []} /></div>
             <div className="opponent-right">
                 {opponents && opponents[2] && getOpponent(2)}</div>
             <div className="my-hand">
                 {hands && (
                     <PlayerHand stackType="hand"
-                        cards={hands[0]}
+                        cards={state.hands[0]}
                         playerId={1}
                         select={select}
                         playSelected={playSelected}
                         pickupCards={pickupCards}
                         sortHand={sortHand}
-                        selectedAmount={currentPlayer === 1 ? selectedAmount : null}
+                        selectedAmount={state.currentPlayer === 1 ? selectedAmount : null}
                     />
                 )}
             </div>
