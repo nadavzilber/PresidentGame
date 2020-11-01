@@ -4,8 +4,8 @@ import Card from './Card';
 import { useRecoilState } from 'recoil';
 import { handsState, discardState } from '../Atoms';
 
-function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCards, sortHand, selectedAmount }) {
-    console.log('PlayerHand cards:', cards)
+function PlayerHand({ select, playerId, playerName, stackType, cards, playSelected, pickupCards, sortHand, selectedAmount }) {
+    //console.log('PlayerHand cards:', cards)
 
     //todo: change to cards instead of hands...
     //but how do i subscribe to 1 specific player hand?
@@ -41,11 +41,11 @@ function PlayerHand({ select, playerId, stackType, cards, playSelected, pickupCa
         <div>
             <div>
                 <div className="player-msgs-container">
-                    <label>Player {playerId}'s hand</label>
+                    <label>{playerName} (ID: {playerId})</label>
                     <label>selectedAmount:{selectedAmount}</label>
                 </div>
                 <div className="player-buttons-container">
-                    <button onClick={() => pickupCards(playerId)}>Pick up cards</button>
+                    <button onClick={() => pickupCards({ type: 'pickupCards', playerId })}>Pick up cards</button>
                     <button onClick={() => select(null, playerId, 'clearAll')}>Clear selection</button>
                     <button onClick={() => playSelected(playerId)}>Play cards</button>
                     <button onClick={() => sortHand(playerId)}>Sort hand</button>

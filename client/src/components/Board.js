@@ -29,66 +29,59 @@ const Board = ({ config }) => {
     //useRecoilState() ==> both reading and writing
     //useResetRecoilState(): Use this hook to reset an atom to its default value.
 
-    useEffect(() => {
-        //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
-        //its rendering the last element of the discard pile instead of the separate array
-        //maybe i need to check what im sending to setLastMove in the startup flow
+    // useEffect(() => {
+    //     //TODO- im getting a console log of 1 type of card for lastMove but a different 1 is rendering
+    //     //its rendering the last element of the discard pile instead of the separate array
+    //     //maybe i need to check what im sending to setLastMove in the startup flow
 
-        //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
-        console.log('Board useEffect')
-        let deck = Deck.createDeck();
-        let numOfCardsInHand = 8;
-        let numOfPlayedCardsInDiscard = 5;
-        let hand1 = [];
-        //TODO solve bug - 
-        //Uncaught TypeError: Cannot add property isSelected, object is not extensible
-        //maybe because i switched from random index value copy to random index splice
-        //but this way theyre unique cards each time
-        for (let i = 0; i < numOfCardsInHand; i++) {
-            let randomIndex = Math.floor(Math.random() * deck.length);
-            let card = deck.splice(randomIndex, 1)[0];
-            hand1.push(card);
-        }
+    //     //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
+    //     let deck = Deck.createDeck();
+    //     let numOfCardsInHand = 8;
+    //     let numOfPlayedCardsInDiscard = 5;
+    //     let hand1 = [];
+    //     //TODO solve bug - 
+    //     //Uncaught TypeError: Cannot add property isSelected, object is not extensible
+    //     //maybe because i switched from random index value copy to random index splice
+    //     //but this way theyre unique cards each time
+    //     for (let i = 0; i < numOfCardsInHand; i++) {
+    //         let randomIndex = Math.floor(Math.random() * deck.length);
+    //         let card = deck.splice(randomIndex, 1)[0];
+    //         hand1.push(card);
+    //     }
 
-        let hand2 = [];
-        for (let i = 0; i < numOfCardsInHand; i++) {
-            let randomIndex = Math.floor(Math.random() * deck.length);
-            let card = deck.splice(randomIndex, 1)[0];
-            // let cardCopy = { ...card };
-            hand2.push(card);
-        }
-        let discard = [];
-        for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
-            let randomIndex = Math.floor(Math.random() * deck.length);
-            let card = deck.splice(randomIndex, 1)[0];
-            discard.push(card);
-        }
-        let randomIndex = Math.floor(Math.random() * deck.length);
-        let lastMoveCard = deck.splice(randomIndex, 1)[0];
-        //let lastMoveCard = { ...card };
-        //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
-        console.log('Initial randomly generated hands:', [hand1, hand2]);
-        console.log('Initial randomly generated discard pile:', discard);
-        console.log('Initial randomly generated lastMoveCard: ', lastMoveCard);
-        let newValueToBeat = valueToBeatToString(lastMoveCard.num);
-        console.log('Initial newValueToBeat:', newValueToBeat)
-        setValueToBeat(newValueToBeat);
-        if (newValueToBeat === 'Joker') setMaxed(true);
-        setLastMove([lastMoveCard]);
-        setHands([hand1, hand2]);
-        console.log('Initial DiscardPile ==>', discard)
-        setDiscardPile(discard);
-        setNumOfCardsNeeded(1);
-        let opps = [
-            { name: "moshe", cards: [...hand2] },
-            { name: "donald", cards: [...hand2] },
-            { name: "robin", cards: [...hand2] }
-        ];
-        setOpponents(opps);
-    }, []);
+    //     let hand2 = [];
+    //     for (let i = 0; i < numOfCardsInHand; i++) {
+    //         let randomIndex = Math.floor(Math.random() * deck.length);
+    //         let card = deck.splice(randomIndex, 1)[0];
+    //         // let cardCopy = { ...card };
+    //         hand2.push(card);
+    //     }
+    //     let discard = [];
+    //     for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
+    //         let randomIndex = Math.floor(Math.random() * deck.length);
+    //         let card = deck.splice(randomIndex, 1)[0];
+    //         discard.push(card);
+    //     }
+    //     let randomIndex = Math.floor(Math.random() * deck.length);
+    //     let lastMoveCard = deck.splice(randomIndex, 1)[0];
+    //     //let lastMoveCard = { ...card };
+    //     //let lastMoveCard = [Object.assign({}, deck[randomIndex])];
+    //     let newValueToBeat = valueToBeatToString(lastMoveCard.num);
+    //     setValueToBeat(newValueToBeat);
+    //     if (newValueToBeat === 'Joker') setMaxed(true);
+    //     setLastMove([lastMoveCard]);
+    //     setHands([hand1, hand2]);
+    //     setDiscardPile(discard);
+    //     setNumOfCardsNeeded(1);
+    //     let opps = [
+    //         { name: "moshe", cards: [...hand2] },
+    //         { name: "donald", cards: [...hand2] },
+    //         { name: "robin", cards: [...hand2] }
+    //     ];
+    //     setOpponents(opps);
+    // }, []);
 
     const valueToBeatToString = (vtb) => {
-        console.log('valueToBeatToString:', vtb)
         if (vtb === 2 || vtb === 15) return 'Joker';
         if (vtb === 14) return 'Ace';
         if (vtb === 13) return 'King';
@@ -98,7 +91,6 @@ const Board = ({ config }) => {
     }
 
     const valueToBeatToNumber = (vtb) => {
-        console.log('valueToBeatToNumber:', vtb)
         if (vtb === 'Joker') return 2;
         if (vtb === 'Ace') return 14;
         if (vtb === 'King') return 13;
@@ -174,20 +166,16 @@ const Board = ({ config }) => {
         if (!isMaxed && resp2.isSet && isEnough) {
             let resp = checkIfJokerWasPlayed(playedCards);
             let cardToBeatString = valueToBeatToString(resp2.nonJokerValue)
-            console.log('resp2.nonJokerValue:', resp2.nonJokerValue)
             if (numOfCardsNeeded === 0 && valueToBeat === 0) return { cardToBeat: cardToBeatString, isValidated: true };
-            // console.log('1 setting vtb', cardToBeatString)
             // setValueToBeat(cardToBeatString);
-            console.log('isJokerPlayed?', resp.isJokerPlayed)
-            console.log('onlyJokers?', resp.onlyJokers)
             if (resp.isJokerPlayed && resp.onlyJokers) {
                 setMaxed(true);
+                console.log('SET MAXTED TO TRUE')
                 return { cardToBeat: 2, isValidated: true };
                 //}// else { //not only jokers, a mix
                 // return isCardValueHigher(resp2.nonJokerValue, valueToBeat)
                 // }
             } else {
-                console.log('else', resp2.nonJokerValue, valueToBeat)
                 return { cardToBeat: resp2.nonJokerValue, isValidated: isCardValueHigher(resp2.nonJokerValue) }
                 // if (playedCards.length === 1) {
                 //     let playedValue = playedCards[0].value;
@@ -241,7 +229,7 @@ const Board = ({ config }) => {
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
             selectedCards = selectedCards.map(card => ({ ...card, isSelected: false }));
-            console.log('selectedCards:::::::::', selectedCards)
+            //console.log('selectedCards:::::::::', selectedCards)
             let handsCopy = [...hands];
             handsCopy[index] = cardsRemainingInHand;
             setHands(handsCopy);
@@ -249,7 +237,7 @@ const Board = ({ config }) => {
             setLastMove(selectedCards);
             setNumOfCardsNeeded(selectedCards.length);
             validateAfterPlay(cardsRemainingInHand, playerId);
-            console.log('2 setting vtb', play.cardToBeat);
+            //console.log('2 setting vtb', play.cardToBeat);
             let vtb = valueToBeatToString(play.cardToBeat);
             setValueToBeat(vtb);
             setSelectedAmount(0);

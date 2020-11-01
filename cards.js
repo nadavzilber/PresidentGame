@@ -17,7 +17,8 @@ const deck = {
     //todo: add deal cards (optional- for the beginning of the game)
 }
 const valueToBeatToString = (vtb) => {
-    console.log('valueToBeatToString:', vtb)
+    //todo: it shouldnt be both here and in the client...
+    //console.log('valueToBeatToString:', vtb)
     if (vtb === 2 || vtb === 15) return 'Joker';
     if (vtb === 14) return 'Ace';
     if (vtb === 13) return 'King';
@@ -27,7 +28,7 @@ const valueToBeatToString = (vtb) => {
 }
 const initGame = (clients) => {
     //todo: remove duplicates from players hands and discard pile- otherwise uniqueId wont work well
-    console.log('===initGame===')
+    //console.log('===initGame===')
     let state = {};
     let newDeck = deck.create();
     let numberOfPlayers = clients.length;
@@ -43,7 +44,7 @@ const initGame = (clients) => {
         }
         newHands.push(currentHand);
     }
-    console.log('newHands ===>', newHands)
+    //console.log('newHands ===>', newHands)
 
     let discard = [];
     for (let i = 0; i < numOfPlayedCardsInDiscard; i++) {
@@ -70,8 +71,8 @@ const initGame = (clients) => {
     //     { name: "donald" },
     //     { name: "robin" }
     // ];
-    state = { vtb: newValueToBeat, isMax: newValueToBeat === 'Joker', lastMove: [lastMoveCard], numOfCardsNeeded: 1, hands: newHands, discard, clients, stage: "game" }
+    state = { vtb: newValueToBeat, isMaxed: newValueToBeat === 'Joker', lastMove: [lastMoveCard], numOfCardsNeeded: 1, hands: newHands, discard, clients, stage: "game" }
     //console.log('opponents:', opps)
     return state;
 }
-module.exports = initGame;
+module.exports = {initGame, valueToBeatToString};

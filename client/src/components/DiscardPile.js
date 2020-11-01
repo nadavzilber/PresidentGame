@@ -4,7 +4,7 @@ import Card from './Card';
 
 function DiscardPile({ cards, lastMove }) {
 
-    console.log('DiscardPile props:', cards, lastMove)
+    //console.log('DiscardPile props:', cards, lastMove)
 
     // const getLastMoveCards = () => {
     //     let cardsCopy = [...cards];

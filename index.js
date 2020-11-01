@@ -5,30 +5,28 @@ const http = require("http");
 const port = process.env.PORT || 5000;
 
 const router = require("./router");
-const { emit } = require("process");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const initGame = require('./cards');
-
+const { initGame, valueToBeatToString } = require('./cards');
+const state = {
+  clients: [],
+  activePlayerId: 1,
+  discard: [],
+  lastMove: [],
+  vtb: 0,
+  hands: [],
+  playerData: {},
+};
 io.on("connection", (socket) => {
+  playerIdCounter = 1;
   console.log("We have a new connection!");
 
   socket.on("disconnect", () => {
     console.log("User has left");
   });
-
-  const state = {
-    clients: [],
-    activePlayerId: 1,
-    discard: [],
-    lastMove: [],
-    vtb: 0,
-    hands: [],
-    playerData: {}
-  };
 
   //todo - need to socket.broadcast or figure out the right method to send to the right clients
 
@@ -48,9 +46,11 @@ io.on("connection", (socket) => {
       io.in('lobby').emit('on-join', { error: "This sessionID already joined" });
     //socket.emit("on-join", { error: "This sessionID already joined" });
     else {
-      state.clients.push({ name, sessionID });
+      state.clients.push({ name, sessionID, playerId: playerIdCounter });
+      playerIdCounter++;
       //socket.emit("on-join", { clients: state.clients });
       io.in('lobby').emit('on-join', { clients: state.clients });
+      state.clients.forEach(client => socket.emit("update", { playerName: client.name, playerId: client.playerId }))
     }
 
     //socket.emit("on-join", state.clients);
@@ -60,39 +60,45 @@ io.on("connection", (socket) => {
     let newState = initGame(state.clients);
     Object.assign(state, newState);
     console.log('new full state:', state)
-    io.in('lobby').emit('start-game', { state });
+    //io.in('lobby').emit('start-game', { state });
     state.clients.forEach((client) => {
       // sending to individual socketid (private message)
-      io.to(client.sessionID).emit('update', state);
+      io.to(client.sessionID).emit('start-game-update', state);
     })
-  })
+  });
 
 
   socket.on("test", (name) => {
     console.log('TEST name:', name);
     //socket.emit("getState", state)
-    io.in('lobby').emit('get-state', { state });
+    io.in('lobby').emit('get-state', state);
   });
 
   socket.on("make-move", (move) => {
     console.log('makeMove:', move);
     if (move.type === "playCards") {
       playCards(move);
-      //let playedCardIDs = move.played.map(card => card.id);
-      //console.log('state.hands:', state.hands);
-      //state.hands[state.activePlayerId] = state.hands[state.activePlayerId - 1].filter(card => playedCardIDs.includes(card.id))
-      //state.discard.push(...move.played)
-      //socket.emit("on-play", state)
-      //TODO: check if maxedOut (if played only 2 or 2s) then ==> state.isMaxed=true;
-
     } else if (move.type === "pickupCards") {
-      state.hands[state.activePlayerId].push(...discard);
+      state.discard.forEach((card) => state.hands[state.activePlayerId - 1].push(card));
+      state.lastMove.forEach((card) => state.hands[state.activePlayerId - 1].push(card))
       state.discard = [];
+      state.lastMove = [];
+      state.numOfCardsNeeded = 0;
+      state.vtb = 0;
+      state.isMaxed = false;
     }
+    isPlayerHandEmpty();
     nextTurn();
-    console.log('emitting an update')
-    io.in('lobby').emit('update', { state });
+    //io.in('lobby').emit('update', state);
+    socket.emit('made-move', { playerHand: state.hands[state.activePlayerId - 1] })
+    const data = { discard: state.discard, lastMove: state.lastMove, vtb: state.vtb, numOfCardsNeeded: state.numOfCardsNeeded, isMaxed: state.isMaxed };
+    io.in('lobby').emit('update-after-play', data)
   });
+
+  socket.on("save-sorted-hand", (data) => {
+    state.hands[data.playerId - 1] = data.sortedHand;
+    //socket.emit('update', state.hands[data.playerId - 1]);
+  })
 
 });
 
@@ -101,29 +107,23 @@ const nextTurn = () => {
 }
 const playCards = (data) => {
   let playedCard = data.played.map(card => ({ ...card, isSelected: false }));
-//TODO: solve bug
-  //   discard: [state.discard, ...data.played],
-//   ^
-
-// ReferenceError: state is not defined
+  let vtb = valueToBeatToString(data.cardToBeat);
   newState = {
     discard: [...state.discard, ...data.played],
     lastMove: playedCard,
     numOfCardsNeeded: playedCard.length,
-    vtb: valueToBeatToString(data.cardToBeat)
+    vtb,
+    isMaxed: vtb === 'Joker'
   }
   Object.assign(state, newState);
-  //setDiscardPile([...state.discard, ...selectedCards]);
-  //setLastMove(selectedCards);
-  //setNumOfCardsNeeded(selectedCards.length);
-  // validateAfterPlay(cardsRemainingInHand, playerId);
-  // console.log('2 setting vtb', play.cardToBeat);
-  // let vtb = valueToBeatToString(play.cardToBeat);
-  // setValueToBeat(vtb);
-  // setSelectedAmount(0);
-  // nextTurn();
-
 }
+
+const isPlayerHandEmpty = () => {
+  //todo: check if player's hand is empty
+  //if so ==> they won, add winner data (pres,vice...) => check if game can still go on (if more players are left), if so => nextTurn
+  //if not => nextTurn
+}
+
 app.use(router);
 
 server.listen(port, () => console.log(`Server has started on port ${port}`));

@@ -54,10 +54,7 @@
   margin-bottom: 45px;
 }
 
-.discard-pile-container {
-  border: none;
-  position: relative;
-}
+
 
 .player-msgs-container label, .gamehost-container label {
   margin: 3px;

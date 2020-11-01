@@ -2,12 +2,13 @@ import React from 'react';
 import Card from './Card';
 import './styles.css';
 
-const Opponent = ({ name, cards, position, select, playerId }) => {
+const Opponent = ({ name, cards, position, select, playerId, playerName }) => {
 
-    console.log('Opponent PROPS:', name, cards, position, select, playerId)
+    //console.log('Opponent PROPS:', name, cards, position, select, playerId)
 
     return (
         <>
+            Opponent {playerName}
             {cards && cards.map((card, index) => (
                 <Card key={index}
                     position={index}
