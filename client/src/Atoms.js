@@ -6,7 +6,7 @@ export const handsState = atom({
 });
 export const discardState = atom({
     key: 'discardState',
-    default: {},
+    default: { discard: [], lastMove: [] },
 });
 export const playerHandState = atom({
     key: 'playerHandState',
@@ -16,9 +16,17 @@ export const myState = atom({
     key: 'myState',
     default: {},
 });
+export const clientState = atom({
+    key: 'clientState',
+    default: []
+});
 export const gameState = atom({
     key: 'gameState',
     default: { stage: "lobby" },
+});
+export const msgState = atom({
+    key: 'msgState',
+    default: {},
 });
 export const lobbyState = atom({
     key: "lobbyState",

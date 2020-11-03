@@ -5,12 +5,8 @@ import { useRecoilState } from 'recoil';
 import { handsState, discardState } from '../Atoms';
 
 function PlayerHand({ select, playerId, playerName, stackType, cards, playSelected, pickupCards, sortHand, selectedAmount }) {
-    //console.log('PlayerHand cards:', cards)
-
-    //todo: change to cards instead of hands...
-    //but how do i subscribe to 1 specific player hand?
     const [hands, setHands] = useRecoilState(handsState);
-    const [isGroup, setIsGroup] = useState(false)
+    //const [isGroup, setIsGroup] = useState(false)
     const buttonStyle = {
         height: '27px',
         backgroundColor: "orange",
@@ -21,22 +17,21 @@ function PlayerHand({ select, playerId, playerName, stackType, cards, playSelect
         cursor: "pointer"
     }
 
-    const groupCardsByNum = () => {
-        let handsCopy = [...hands];
-        let handCopy = handsCopy[[playerId - 1]]
-        let newHand = [];
-        for (let i = 2; i <= 14; i++) {
-            newHand.push(handCopy.filter(card => card.num === i));
-        }
-        newHand = newHand.filter(cardArr => cardArr.length)
-        let finalHand = [];
-        newHand.forEach(cardGroup => cardGroup.forEach(card => finalHand.push(card)))
-        handsCopy[[playerId - 1]] = finalHand;
-        setHands(handsCopy);
-        setIsGroup(true);
-    }
+    // const groupCardsByNum = () => {
+    //     let handsCopy = [...hands];
+    //     let handCopy = handsCopy[[playerId - 1]]
+    //     let newHand = [];
+    //     for (let i = 2; i <= 14; i++) {
+    //         newHand.push(handCopy.filter(card => card.num === i));
+    //     }
+    //     newHand = newHand.filter(cardArr => cardArr.length)
+    //     let finalHand = [];
+    //     newHand.forEach(cardGroup => cardGroup.forEach(card => finalHand.push(card)))
+    //     handsCopy[[playerId - 1]] = finalHand;
+    //     setHands(handsCopy);
+    //     setIsGroup(true);
+    // }
 
-    //todo: add emotes button (rendered probably in gamehost)
     return (
         <div>
             <div>

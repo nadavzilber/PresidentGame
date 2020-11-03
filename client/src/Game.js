@@ -6,12 +6,13 @@ import DiscardPile from './components/DiscardPile';
 import Deck from './Deck'
 import './components/styles.css';
 import { gameState, handsState, playersState, discardState, gameInfo, playerHandState, myState } from './Atoms';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+//todo: add emotes button (rendered probably in gamehost)
 
 const Game = ({ actions }) => {
     const [state, setGameState] = useRecoilState(gameState);
-    const [hands, setHands] = useRecoilState(handsState);
-    const [playerHand, setPlayerHand] = useRecoilState(playerHandState);
+    const [hands] = useRecoilValue(handsState);
     const [myself, setMyself] = useRecoilState(myState);
     const [players, setPlayers] = useRecoilState(playersState);
     const [discard, setDiscard] = useRecoilState(discardState);
@@ -21,24 +22,24 @@ const Game = ({ actions }) => {
     const [gameMsgs, setGameMsgs] = useState();
     const [winners, setWinners] = useState([]);
 
-    const setupOpponents = () => {
-        let notMe = state.clients.filter(client => (client.playerId !== state.playerId && client.playerName !== state.playerName));
-        console.log('setupOpponents ==> Me: ', state.playerName, state.playerId, 'notMe: ', notMe)
-        setOpponents(notMe);
-    }
+    // const setupOpponents = () => {
+    //     let notMe = state.clients.filter(client => (client.playerId !== state.playerId && client.playerName !== state.playerName));
+    //     console.log('setupOpponents ==> Me: ', state.playerName, state.playerId, 'notMe: ', notMe)
+    //     setOpponents(notMe);
+    // }
 
-    const getOpponent = (id) => {
-        //console.log('opponents[id]:',opponents[id])
-        return <Opponent
-            key={id}
-            position={id + 1}
-            name={opponents[id].name}
-            cards={state.hands[id + 1]}
-            playerId={id + 1}
-            playerName={opponents[id].name}
-            select={select}
-        />
-    }
+    // const getOpponent = (id) => {
+    //     //console.log('opponents[id]:',opponents[id])
+    //     return <Opponent
+    //         key={id}
+    //         position={id + 1}
+    //         name={opponents[id].name}
+    //         cards={state.hands[id + 1]}
+    //         playerId={id + 1}
+    //         playerName={opponents[id].name}
+    //         select={select}
+    //     />
+    // }
 
 
     const valueToBeatToNumber = (vtb) => {
@@ -52,7 +53,6 @@ const Game = ({ actions }) => {
 
     const valueToBeatToString = (vtb) => {
         //todo: it shouldnt be both here and in the client...
-        //console.log('valueToBeatToString:', vtb)
         if (vtb === 2 || vtb === 15) return 'Joker';
         if (vtb === 14) return 'Ace';
         if (vtb === 13) return 'King';
@@ -62,49 +62,43 @@ const Game = ({ actions }) => {
     }
 
     const select = (uniqueId, playerId, type) => {
-        type === 'clearAll' ? clearAllSelections(playerId) : type === 'one' ? selectOne(uniqueId, playerId) : type === 'selectAll' ? selectAll(uniqueId, playerId, false) : selectAll(uniqueId, playerId, true);;
+        console.log('select', uniqueId, playerId, type)
+        type === 'clearAll' ? clearAllSelections(playerId)
+            : type === 'one' ? selectOne(uniqueId, playerId)
+                : type === 'selectAll' ? selectAll(uniqueId, playerId, false)
+                    : selectAll(uniqueId, playerId, true);
     }
 
     const selectOne = (uniqueId, playerId) => {
-        if (playerId !== state.activePlayerId) return;
-        //let playerHandIndex = playerId - 1;
-        //let playerHand = [...state.hands[playerHandIndex]];
-        let playerHand = [...myself.playerHand];
+        if (playerId !== info.activePlayerId) return;
+        const playerHand = [...myself.playerHand];
         const cardIndex = playerHand.findIndex(card => card.uniqueId === uniqueId);
-        let card = { ...playerHand[cardIndex] };
+        const card = { ...playerHand[cardIndex] };
         card.isSelected = !!card.isSelected ? false : true;
-        //let allHandsCopy = [...hands];
         playerHand[cardIndex] = card;
         setMyself({ ...myself, playerHand });
-
-        //allHandsCopy[playerHandIndex] = playerHand;
-        //setGameState({ ...state, hands: allHandsCopy });
-        //setHands(allHandsCopy);
         setSelectedAmount(card.isSelected ? selectedAmount + 1 : selectedAmount - 1);
     }
 
     const selectAll = (uniqueId, playerId, deselectAll) => {
-        if (playerId !== state.activePlayerId) return;
-        let playerHandIndex = playerId - 1;
-        let handCopy = [...state.hands[playerHandIndex]];
-        const cardIndex = handCopy.findIndex(card => card.uniqueId === uniqueId);
-        let selectedCard = { ...handCopy[cardIndex] };
+        if (playerId !== info.activePlayerId) return;
+        let playerHand = [...myself.playerHand];
         let changedCardsAmount = 0;
-        handCopy = handCopy.map(card => {
+        const cardIndex = playerHand.findIndex(card => card.uniqueId === uniqueId);
+        const selectedCard = { ...playerHand[cardIndex] };
+        playerHand = playerHand.map(card => {
             if (card.num === selectedCard.num) {
                 changedCardsAmount++;
                 return { ...card, isSelected: deselectAll ? false : true };
             }
             return card;
         });
-        let allHandsCopy = [...state.hands];
-        allHandsCopy[playerHandIndex] = handCopy;
-        setGameState({ ...state, hands: allHandsCopy });
+        setMyself({ ...myself, playerHand })
         setSelectedAmount(deselectAll ? selectedAmount - changedCardsAmount : selectedAmount + changedCardsAmount);
     }
 
     const clearAllSelections = (playerId) => {
-        if (playerId !== state.activePlayerId) return;
+        if (playerId !== info.activePlayerId) return;
         let index = playerId - 1;
         let hand = [...state.hands[index]];
         let allHandsCopy = [...state.hands];
@@ -123,6 +117,7 @@ const Game = ({ actions }) => {
     const isCardValueHigher = (nonJokerValue) => {
         let playedValue = valueToBeatToNumber(nonJokerValue)
         let vtb = valueToBeatToNumber(info.vtb);
+        console.log('isCardValHigher? info.vtb:', info.vtb)
         return (playedValue > vtb);
     }
 
@@ -162,23 +157,19 @@ const Game = ({ actions }) => {
     }
 
     const playSelected = (playerId) => {
-        if (playerId !== state.activePlayerId) return;
-        let index = playerId - 1;
-        let selectedCards = state.hands[index].filter(card => card.isSelected);
-        //let cardsRemainingInHand = state.hands[index].filter(card => !card.isSelected);
+        if (playerId !== info.activePlayerId) return;
+        let selectedCards = myself.playerHand.filter(card => card.isSelected);
         let play = validateBeforePlay(selectedCards);
         if (play.isValidated) {
-            console.log('play is validated')
-            actions.makeMove({ type: 'playCards', played: selectedCards, playerId });
-        }
+            console.log('isValidated');
+            //todo: solve bug - played card isnt removed from hand! solve
+            actions.makeMove({ type: 'playCards', played: selectedCards, playerId, cardToBeat: play.cardToBeat });
+        } else console.log('is not validated')
     }
 
     const sortHand = (playerId) => {
-        //let allHandsCopy = [...state.hands];
-        //let playerHandIndex = playerId - 1;
         let playerHand = [...myself.playerHand];
         playerHand.sort(compareNumbers);
-        //allHandsCopy[playerHandIndex] = playerHand;
         actions.saveSortedHand(playerHand, playerId)
         setMyself({ ...myself, playerHand });
     }
@@ -200,8 +191,9 @@ const Game = ({ actions }) => {
                 {opponents && opponents[0] && getOpponent(0)}
             </div> */}
             <div className="board">
-                ActivePlayerId:{state.playerId}
-                <GameHost currentPlayer={state.activePlayerId}
+                ActivePlayerId:{info.activePlayerId}
+                <GameHost
+                    currentPlayer={info.activePlayerId}
                     numOfCardsNeeded={info.numOfCardsNeeded}
                     valueToBeat={info.vtb}
                     isMaxed={info.isMaxed}
@@ -211,7 +203,6 @@ const Game = ({ actions }) => {
                     lastMove={discard.lastMove || []} /></div>
             {/* <div className="opponent-right">
                 {opponents && opponents[2] && getOpponent(2)}</div> */}
-            <span>myself:{JSON.stringify(myself)}</span>
             <div className="my-hand">
                 {myself && (
                     <PlayerHand stackType="hand"
@@ -222,7 +213,7 @@ const Game = ({ actions }) => {
                         playSelected={playSelected}
                         pickupCards={actions.makeMove}
                         sortHand={sortHand}
-                        selectedAmount={state.activePlayerId === state.playerId ? selectedAmount : null}
+                        selectedAmount={info.activePlayerId === state.playerId ? selectedAmount : null}
                     />
                 )}
             </div>

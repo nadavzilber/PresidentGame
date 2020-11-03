@@ -18,7 +18,6 @@ const state = {
   lastMove: [],
   vtb: 0,
   hands: [],
-  playerData: {},
 };
 io.on("connection", (socket) => {
   playerIdCounter = 1;
@@ -30,48 +29,58 @@ io.on("connection", (socket) => {
 
   //todo - need to socket.broadcast or figure out the right method to send to the right clients
 
-  socket.on('create-room', (room) => {
-    console.log('create room:', room)
-    socket.join(room);
-  });
+  // socket.on('create-room', (room) => {
+  //   console.log('create room:', room)
+  //   socket.join(room);
+  // });
+  // let checkConnection = () => {
+  //   return socket.connected;
+  // }
 
-  socket.on("join-game", (name) => {
-    console.log(name, 'has joined the game')
+  // let inter = setInterval(()=> {
+  //   console.log('connected?',checkConnection());
+  // }, 5000)
+
+
+  socket.on("join-game", (playerName) => {
+    console.log(playerName, 'has joined the game')
     const sessionID = socket.id;
-    console.log('sessionID:', sessionID);
+    console.log(playerName, 'sessionID:', sessionID);
     let clientIDs = state.clients.map(client => client.sessionID);
-    console.log('clientIDs.includes(sessionID)?', clientIDs.includes(sessionID))
-    if (clientIDs.includes(sessionID))
+    if (clientIDs.includes(sessionID)) {
       // sending to all clients in 'game' room, including sender
-      io.in('lobby').emit('on-join', { error: "This sessionID already joined" });
-    //socket.emit("on-join", { error: "This sessionID already joined" });
-    else {
-      state.clients.push({ name, sessionID, playerId: playerIdCounter });
+      io.emit('on-join', { error: "This sessionID already joined" }); //.in('lobby')
+    } else {
+      state.clients.push({ playerName, sessionID, playerId: playerIdCounter });
       playerIdCounter++;
       //socket.emit("on-join", { clients: state.clients });
-      io.in('lobby').emit('on-join', { clients: state.clients });
-      state.clients.forEach(client => socket.emit("update", { playerName: client.name, playerId: client.playerId }))
+      io.emit('on-join', { clients: state.clients }); //in('lobby')
+      //todo: this isnt right
+      //state.clients.forEach(client => socket.emit("player-info-update", { playerName: client.playerName, playerId: client.playerId }));
+      //io.emit('player-info-update', state.clients)
+      const lastIndex = state.clients.length - 1;
+      socket.emit("player-info-update", { playerName: state.clients[lastIndex].playerName, playerId: state.clients[lastIndex].playerId });
     }
 
     //socket.emit("on-join", state.clients);
   });
+
   socket.on("start-game", () => {
     console.log('start-game');
-    let newState = initGame(state.clients);
-    Object.assign(state, newState);
-    console.log('new full state:', state)
-    //io.in('lobby').emit('start-game', { state });
-    state.clients.forEach((client) => {
-      // sending to individual socketid (private message)
-      io.to(client.sessionID).emit('start-game-update', state);
-    })
-  });
-
-
-  socket.on("test", (name) => {
-    console.log('TEST name:', name);
-    //socket.emit("getState", state)
-    io.in('lobby').emit('get-state', state);
+    if (state.clients.length > 1) {
+      let newState = initGame(state.clients);
+      Object.assign(state, newState);
+      //console.log('new full state:', state)
+      console.log('state.clients:', state.clients)
+      //io.in('lobby').emit('start-game', { state });
+      state.clients.forEach((client) => {
+        // sending to individual socketid (private message)
+        io.to(client.sessionID).emit('start-game-update', state);
+      })
+    } else {
+      console.log('not enough players connected')
+      socket.emit('msg-update', { msg: "Need at least 2 players in order to start the game" });
+    }
   });
 
   socket.on("make-move", (move) => {
@@ -88,11 +97,11 @@ io.on("connection", (socket) => {
       state.isMaxed = false;
     }
     isPlayerHandEmpty();
-    nextTurn();
     //io.in('lobby').emit('update', state);
-    socket.emit('made-move', { playerHand: state.hands[state.activePlayerId - 1] })
-    const data = { discard: state.discard, lastMove: state.lastMove, vtb: state.vtb, numOfCardsNeeded: state.numOfCardsNeeded, isMaxed: state.isMaxed };
-    io.in('lobby').emit('update-after-play', data)
+    socket.emit('made-move', { playerHand: state.hands[state.activePlayerId - 1] });
+    nextTurn();
+    const data = { activePlayerId: state.activePlayerId, hands: state.hands, discard: state.discard, lastMove: state.lastMove, vtb: state.vtb, numOfCardsNeeded: state.numOfCardsNeeded, isMaxed: state.isMaxed };
+    io.emit('update-after-play', data); //in('lobby').
   });
 
   socket.on("save-sorted-hand", (data) => {
@@ -103,15 +112,21 @@ io.on("connection", (socket) => {
 });
 
 const nextTurn = () => {
-  state.activePlayerId = state.activePlayerId + 1 > state.clients.length ? 1 : state.activePlayerId;
+  console.log('state.clients.length?', state.clients.length, 'current state.activePlayerId:', state.activePlayerId)
+  state.activePlayerId = state.activePlayerId + 1 > state.clients.length ? 1 : state.activePlayerId + 1;
 }
 const playCards = (data) => {
-  let playedCard = data.played.map(card => ({ ...card, isSelected: false }));
+  console.log('PLAYCARDS data:::', data)
+  let playedCards = data.played.map(card => ({ ...card, isSelected: false }));
+  const uniqueIdPlayedCards = playedCards.map(card => card.uniqueId);
   let vtb = valueToBeatToString(data.cardToBeat);
+  const newHand = state.hands[state.activePlayerId - 1].filter(card => !uniqueIdPlayedCards.includes(card.uniqueId));
+  state.hands[state.activePlayerId - 1] = newHand;
+
   newState = {
-    discard: [...state.discard, ...data.played],
-    lastMove: playedCard,
-    numOfCardsNeeded: playedCard.length,
+    discard: [...state.discard, ...playedCards],
+    lastMove: playedCards,
+    numOfCardsNeeded: playedCards.length,
     vtb,
     isMaxed: vtb === 'Joker'
   }

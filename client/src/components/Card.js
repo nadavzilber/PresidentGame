@@ -31,10 +31,10 @@ function Card({ playerId, isSelected, select, position, uniqueId, id, num, suit,
 
     return (
         <div>
-            {/* {!inDiscardPile && <button
+            {!inDiscardPile && <button
                 style={buttonStyle}
                 onClick={() => select && select(uniqueId, playerId, !isSelected ? 'selectAll' : 'deselectAll')}>
-                {!isSelected ? 'Select' : 'Deselect'} All {id}</button>} */}
+                {!isSelected ? 'Select' : 'Deselect'} All {id}</button>}
 
             <div className={`${isFaceDown ? 'facedown-card' : 'card'} ${isSelected ? 'selected' : ''}`}
                 onClick={() => select && select(uniqueId, playerId, 'one')}>
